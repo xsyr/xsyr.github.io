@@ -67,7 +67,7 @@
 信息还能保持高可读性。相比 strace，strace+ 还能够记录系统调用的调用栈，这样
 可以方便的看出到底是谁调用了它。它也是分析源码和简单分析性能瓶颈的好工具。 <br />
 ptrace 函数是 strace 实现的关键，通过 ptrace 可以操作其他进程的内存，设置断点等。</p>
-<div class="language-c highlighter-rouge"><pre class="highlight"><code><span class="kt">long</span> <span class="n">ptrace</span><span class="p">(</span><span class="k">enum</span> <span class="n">__ptrace_request</span> <span class="n">request</span><span class="p">,</span> <span class="n">pid_t</span> <span class="n">pid</span><span class="p">,</span>
+<div class="language-c highlighter-rouge"><pre class="highlight line-numbers "><code><span class="kt">long</span> <span class="n">ptrace</span><span class="p">(</span><span class="k">enum</span> <span class="n">__ptrace_request</span> <span class="n">request</span><span class="p">,</span> <span class="n">pid_t</span> <span class="n">pid</span><span class="p">,</span>
                    <span class="kt">void</span> <span class="o">*</span><span class="n">addr</span><span class="p">,</span> <span class="kt">void</span> <span class="o">*</span><span class="n">data</span><span class="p">);</span>
 </code></pre>
 </div>
@@ -76,7 +76,7 @@ ptrace 函数是 strace 实现的关键，通过 ptrace 可以操作其他进程
 
 <h2 id="安装">安装</h2>
 
-<div class="language-shell highlighter-rouge"><pre class="highlight"><code><span class="gp">$ </span>git clone https://code.google.com/p/strace-plus/
+<div class="language-bash highlighter-rouge"><pre class="highlight line-numbers "><code><span class="gp">$ </span>git clone https://code.google.com/p/strace-plus/
 <span class="gp">$ </span>autoreconf -f -i
 <span class="gp">$ </span>./configure
 <span class="gp">$ </span>make
@@ -90,17 +90,17 @@ ptrace 函数是 strace 实现的关键，通过 ptrace 可以操作其他进程
 中找到答案(这算是开源软件的特点吧：缺乏文档。); )。</p>
 
 <p>先跑一下官网的 demo，执行</p>
-<div class="language-shell highlighter-rouge"><pre class="highlight"><code><span class="gp">$ </span>strace+ -o hello.out ./hello
+<div class="language-bash highlighter-rouge"><pre class="highlight line-numbers "><code><span class="gp">$ </span>strace+ -o hello.out ./hello
 </code></pre>
 </div>
 
 <h3 id="解析-helloout-查看调用栈">解析 hello.out 查看调用栈</h3>
-<div class="language-shell highlighter-rouge"><pre class="highlight"><code><span class="gp">$ </span>python scripts/pretty_print_strace_out.py hello.out --trace
+<div class="language-bash highlighter-rouge"><pre class="highlight line-numbers "><code><span class="gp">$ </span>python scripts/pretty_print_strace_out.py hello.out --trace
 </code></pre>
 </div>
 
 <h3 id="或者以树的形式查看调用栈">或者以树的形式查看调用栈</h3>
-<div class="language-shell highlighter-rouge"><pre class="highlight"><code><span class="gp">$ </span>python scripts/pretty_print_strace_out.py hello.out --tree
+<div class="language-bash highlighter-rouge"><pre class="highlight line-numbers "><code><span class="gp">$ </span>python scripts/pretty_print_strace_out.py hello.out --tree
 </code></pre>
 </div>
 
@@ -111,7 +111,7 @@ ptrace 函数是 strace 实现的关键，通过 ptrace 可以操作其他进程
 <h2 id="使用">使用</h2>
 
 <p>strace+ 的使用方式如下：</p>
-<div class="language-shell highlighter-rouge"><pre class="highlight"><code><span class="gp">$ </span>strace <span class="o">[</span>-CdffhiqrtttTvVxxy] <span class="o">[</span>-In] <span class="o">[</span>-eexpr]... <span class="o">[</span>-acolumn] <span class="o">[</span>-ofile] <span class="o">[</span>-sstrsize] <span class="o">[</span>-Ppath]... -ppid... / <span class="o">[</span>-D] <span class="o">[</span>-Evar[<span class="o">=</span>val]]... <span class="o">[</span>-uusername] <span class="nb">command</span> <span class="o">[</span>args]
+<div class="language-bash highlighter-rouge"><pre class="highlight line-numbers "><code><span class="gp">$ </span>strace <span class="o">[</span>-CdffhiqrtttTvVxxy] <span class="o">[</span>-In] <span class="o">[</span>-eexpr]... <span class="o">[</span>-acolumn] <span class="o">[</span>-ofile] <span class="o">[</span>-sstrsize] <span class="o">[</span>-Ppath]... -ppid... / <span class="o">[</span>-D] <span class="o">[</span>-Evar[<span class="o">=</span>val]]... <span class="o">[</span>-uusername] <span class="nb">command</span> <span class="o">[</span>args]
 
 <span class="gp">$ </span>strace -c[df] <span class="o">[</span>-In] <span class="o">[</span>-eexpr]... <span class="o">[</span>-Ooverhead] <span class="o">[</span>-Ssortby] -ppid... / <span class="o">[</span>-D] <span class="o">[</span>-Evar[<span class="o">=</span>val]]... <span class="o">[</span>-uusername] <span class="nb">command</span> <span class="o">[</span>args]
 </code></pre>
@@ -196,7 +196,7 @@ strace+ 结束对进程的跟踪并让它们继续运行。</p>
 <section class="author-detail">
     <section class="post-footer-item author-card">
         <div class="avatar">
-            <img src="/assets/img/profile.jpg" alt="">
+            <img src="//assets/img/profile.jpg" alt="">
         </div>
         <div class="author-name" rel="author">黄成林</div>
         <div class="bio">
@@ -225,7 +225,7 @@ strace+ 结束对进程的跟踪并让它们继续运行。</p>
             
         </div>
         
-         
+        
         <div class="read-next-item">
             <a href="/%E7%BC%96%E7%A8%8B/c/c++/2013/10/15/duma-malloc-debugger.html" class="read-next-link"></a>
             <section>

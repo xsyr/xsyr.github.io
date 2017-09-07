@@ -47,13 +47,13 @@
 <header class="g-banner post-header post-pattern-circuitBoard bgcolor-default post-no-cover" data-theme="default">
     <div class="post-wrapper">
         <div class="post-tags">
-             
             
-            <a href="tags#Linux" class="post-tag">Linux</a>
             
-            <a href="tags#openSUSE" class="post-tag">openSUSE</a>
+            <a href="/tags#Linux" class="post-tag">Linux</a>
             
-            <a href="tags#bumblebee" class="post-tag">bumblebee</a>
+            <a href="/tags#openSUSE" class="post-tag">openSUSE</a>
+            
+            <a href="/tags#bumblebee" class="post-tag">bumblebee</a>
             
             
         </div>
@@ -85,14 +85,14 @@ Linux，然后…..没下文了。</p>
 
 <h2 id="创建-bumblebee-和-video-用户组">创建 bumblebee 和 video 用户组</h2>
 
-<div class="language-shell highlighter-rouge"><pre class="highlight"><code><span class="gp">$ </span>groupadd bumblebee
+<div class="language-bash highlighter-rouge"><pre class="highlight line-numbers "><code><span class="gp">$ </span>groupadd bumblebee
 <span class="gp">$ </span>groupadd video
 <span class="gp">$ </span>usermod -a -G bumblebee,videl  <span class="o">[</span>你的用户名]
 <span class="gp">$ </span>groups
 </code></pre>
 </div>
 <p>一定要确保自己在 bumblebee 和 video 组里。可以用下面的命令查看:</p>
-<div class="language-shell highlighter-rouge"><pre class="highlight"><code><span class="gp">$ </span>groups
+<div class="language-bash highlighter-rouge"><pre class="highlight line-numbers "><code><span class="gp">$ </span>groups
 </code></pre>
 </div>
 
@@ -100,7 +100,7 @@ Linux，然后…..没下文了。</p>
 
 <h2 id="添加-overman79s-源">添加 Overman79’s 源</h2>
 
-<div class="language-shell highlighter-rouge"><pre class="highlight"><code><span class="gp">$ </span>zypper ar http://download.opensuse.org/repositories/home:/Overman79:/Laptop/openSUSE_12.3/ Overman79
+<div class="language-bash highlighter-rouge"><pre class="highlight line-numbers "><code><span class="gp">$ </span>zypper ar http://download.opensuse.org/repositories/home:/Overman79:/Laptop/openSUSE_12.3/ Overman79
 </code></pre>
 </div>
 
@@ -108,7 +108,7 @@ Linux，然后…..没下文了。</p>
 
 <h2 id="安装-dkms-dkms-nvidia--dkms-bbswitch">安装 dkms dkms-nvidia  dkms-bbswitch</h2>
 
-<div class="language-shell highlighter-rouge"><pre class="highlight"><code><span class="gp">$ </span>zypper <span class="k">in </span>dkms dkms-nvidia dkms-bbswitch bumblebee primus x11-video-nvidia
+<div class="language-bash highlighter-rouge"><pre class="highlight line-numbers "><code><span class="gp">$ </span>zypper <span class="k">in </span>dkms dkms-nvidia dkms-bbswitch bumblebee primus x11-video-nvidia
 </code></pre>
 </div>
 
@@ -119,7 +119,7 @@ Linux，然后…..没下文了。</p>
 
 <h2 id="开启-dkms-和-bumblebeed-服务">开启 dkms 和 bumblebeed 服务</h2>
 
-<div class="language-shell highlighter-rouge"><pre class="highlight"><code><span class="gp">$ </span>systemctl <span class="nb">enable </span>dkms
+<div class="language-bash highlighter-rouge"><pre class="highlight line-numbers "><code><span class="gp">$ </span>systemctl <span class="nb">enable </span>dkms
 <span class="gp">$ </span>systemctl <span class="nb">enable </span>bumblebeed
 </code></pre>
 </div>
@@ -132,7 +132,7 @@ Linux，然后…..没下文了。</p>
 
 <h2 id="看看n卡关闭了没">看看N卡关闭了没</h2>
 
-<div class="language-shell highlighter-rouge"><pre class="highlight"><code><span class="gp">$ </span>cat /proc/acpi/bbswitch
+<div class="language-bash highlighter-rouge"><pre class="highlight line-numbers "><code><span class="gp">$ </span>cat /proc/acpi/bbswitch
 <span class="gp">$ </span>primusrun --status
 </code></pre>
 </div>
@@ -140,7 +140,7 @@ Linux，然后…..没下文了。</p>
 <p>第一个命令应该显示 <strong>OFF</strong>，第二个命令应该显示 <strong>Discrete video card is off</strong>. <br />
 要是不行的话执行下面的命令：</p>
 
-<div class="language-shell highlighter-rouge"><pre class="highlight"><code><span class="gp">$ </span>rmmod nvidia
+<div class="language-bash highlighter-rouge"><pre class="highlight line-numbers "><code><span class="gp">$ </span>rmmod nvidia
 <span class="gp">$ </span>tee /proc/acpi/bbswitch <span class="o">&lt;&lt;&lt;</span>OFF
 </code></pre>
 </div>
@@ -151,7 +151,7 @@ Linux，然后…..没下文了。</p>
 
 <h2 id="把-nvidiako-列入黑名单重新生成新的-initrd">把 nvidia.ko 列入黑名单，重新生成新的 initrd</h2>
 
-<div class="language-shell highlighter-rouge"><pre class="highlight"><code><span class="gp">$ </span><span class="nb">cd</span> /etc/modprobe.d
+<div class="language-bash highlighter-rouge"><pre class="highlight line-numbers "><code><span class="gp">$ </span><span class="nb">cd</span> /etc/modprobe.d
 <span class="gp">$ </span><span class="nb">echo</span> <span class="s1">'blacklist nvidia'</span> &gt;&gt; 50-blacklist.conf
 <span class="gp">$ </span><span class="nb">echo</span> <span class="s1">'blacklist nvidia'</span> &gt; 50-nvidia.conf
 <span class="gp">$ </span><span class="nb">echo</span> <span class="s1">'blacklist nvidia'</span> &gt; nvidia-default.conf
@@ -164,7 +164,7 @@ Linux，然后…..没下文了。</p>
 
 <p>打开 <code class="highlighter-rouge">/etc/sysconfig/kernel</code> ，把所有和 nvidia 相关的都注释掉。</p>
 
-<div class="language-shell highlighter-rouge"><pre class="highlight"><code><span class="gp">$ </span>mkinitrd
+<div class="language-bash highlighter-rouge"><pre class="highlight line-numbers "><code><span class="gp">$ </span>mkinitrd
 </code></pre>
 </div>
 
@@ -188,7 +188,7 @@ Linux，然后…..没下文了。</p>
 <section class="author-detail">
     <section class="post-footer-item author-card">
         <div class="avatar">
-            <img src="/assets/img/profile.jpg" alt="">
+            <img src="//assets/img/profile.jpg" alt="">
         </div>
         <div class="author-name" rel="author">黄成林</div>
         <div class="bio">
@@ -217,7 +217,7 @@ Linux，然后…..没下文了。</p>
             
         </div>
         
-         
+        
         <div class="read-next-item">
             <a href="/%E7%BC%96%E7%A8%8B/2013/09/16/interface-what-i-think.html" class="read-next-link"></a>
             <section>

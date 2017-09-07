@@ -76,7 +76,7 @@
 <code class="highlighter-rouge">$(SRC)/llvm/tools/clang/tools/scan-view</code> 目录下。</p>
 
 <p>可以把这两个目录添加到 PATH 路径下，也可以放到 ～/bin 下。</p>
-<div class="language-shell highlighter-rouge"><pre class="highlight"><code><span class="gp">$ </span>install -d ~/bin/clang-static-analyzer
+<div class="language-bash highlighter-rouge"><pre class="highlight line-numbers "><code><span class="gp">$ </span>install -d ~/bin/clang-static-analyzer
 <span class="gp">$ </span>cp -R <span class="k">$(</span>SRC<span class="k">)</span>/llvm/tools/clang/tools/scan-build <span class="se">\</span>
         <span class="k">$(</span>SRC<span class="k">)</span>/llvm/tools/clang/tools/scan-view ~/bin/clang-static-analyzer
 <span class="gp">$ </span><span class="nb">echo</span> <span class="s1">'export PATH="$PATH:$HOME/bin/clang-static-analyzer/scan-build:$HOME/bin/clang-static-analyzer/scan-view"'</span> &gt;&gt; ~/.bashrc
@@ -86,7 +86,7 @@
 <h2 id="使用">使用</h2>
 
 <h3 id="编译单个文件">编译单个文件</h3>
-<div class="language-shell highlighter-rouge"><pre class="highlight"><code><span class="gp">$ </span>scan-build gcc -c main.c
+<div class="language-bash highlighter-rouge"><pre class="highlight line-numbers "><code><span class="gp">$ </span>scan-build gcc -c main.c
 </code></pre>
 </div>
 
@@ -96,7 +96,7 @@ c++-analyzer。它们也是 Perl 写的脚本程序，最终都会调用 <code c
 
 <h3 id="结合-make-或-configure">结合 make 或 configure</h3>
 
-<div class="language-shell highlighter-rouge"><pre class="highlight"><code><span class="gp">$ </span>scan-build ./configure
+<div class="language-bash highlighter-rouge"><pre class="highlight line-numbers "><code><span class="gp">$ </span>scan-build ./configure
 <span class="gp">$ </span>scan-build make
 </code></pre>
 </div>
@@ -105,13 +105,13 @@ c++-analyzer。它们也是 Perl 写的脚本程序，最终都会调用 <code c
 
 <h3 id="结合-cmake-使用">结合 CMake 使用</h3>
 
-<div class="language-shell highlighter-rouge"><pre class="highlight"><code><span class="gp">$ </span>cmake -DCMAKE_C_COMPILER<span class="o">=</span>ccc-analyzer -DCMAKE_CXX_COMPILER<span class="o">=</span>c++-analyzer ..
+<div class="language-bash highlighter-rouge"><pre class="highlight line-numbers "><code><span class="gp">$ </span>cmake -DCMAKE_C_COMPILER<span class="o">=</span>ccc-analyzer -DCMAKE_CXX_COMPILER<span class="o">=</span>c++-analyzer ..
 </code></pre>
 </div>
 
 <h3 id="例子">例子</h3>
 
-<div class="language-c highlighter-rouge"><pre class="highlight"><code><span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
+<div class="language-c highlighter-rouge"><pre class="highlight line-numbers "><code><span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
 <span class="p">{</span>
     <span class="kt">int</span> <span class="n">a</span><span class="p">[</span><span class="mi">2</span><span class="p">];</span>
     <span class="kt">int</span> <span class="n">i</span><span class="p">;</span>
@@ -122,7 +122,7 @@ c++-analyzer。它们也是 Perl 写的脚本程序，最终都会调用 <code c
 </code></pre>
 </div>
 
-<div class="language-shell highlighter-rouge"><pre class="highlight"><code><span class="gp">$ </span>scan-build --use-analyzer<span class="o">=</span>/usr/bin/clang -enable-checker alpha.security gcc bufferAccessOutOfBounds/bad.c
+<div class="language-bash highlighter-rouge"><pre class="highlight line-numbers "><code><span class="gp">$ </span>scan-build --use-analyzer<span class="o">=</span>/usr/bin/clang -enable-checker alpha.security gcc bufferAccessOutOfBounds/bad.c
 scan-build: Using <span class="s1">'/usr/bin/clang-3.4'</span> <span class="k">for </span>static analysis
 bufferAccessOutOfBounds/bad.c:6:14: warning: Access out-of-bound array element <span class="o">(</span>buffer overflow<span class="o">)</span>
         a[i] <span class="o">=</span> 0;
@@ -146,12 +146,12 @@ scan-build: Run <span class="s1">'scan-view /tmp/scan-build-2014-01-12-144457-32
 <code class="highlighter-rouge">-enable-checker</code> 和 <code class="highlighter-rouge">-disable-checker</code> 开启和禁用具体的 checker 或者 某种类别的
 checker。</p>
 
-<div class="language-shell highlighter-rouge"><pre class="highlight"><code><span class="gp">$ </span>scan-build -enable-checker alpha.security.ArrayBoundV2 ... <span class="c"># 启用数组边界检查</span>
+<div class="language-bash highlighter-rouge"><pre class="highlight line-numbers "><code><span class="gp">$ </span>scan-build -enable-checker alpha.security.ArrayBoundV2 ... <span class="c"># 启用数组边界检查</span>
 </code></pre>
 </div>
 
 <p>所有支持的 checkers 可以使用如下命令查看：</p>
-<div class="language-shell highlighter-rouge"><pre class="highlight"><code><span class="gp">$ </span>clang -cc1 -analyzer-checker-help
+<div class="language-bash highlighter-rouge"><pre class="highlight line-numbers "><code><span class="gp">$ </span>clang -cc1 -analyzer-checker-help
   alpha.core.BoolAssignment       Warn about assigning non-<span class="o">{</span>0,1<span class="o">}</span> values to Boolean variables
   alpha.core.CastSize             Check when casting a malloced <span class="nb">type </span>T, whether the size is a multiple of the size of T
   alpha.core.CastToStruct         Check <span class="k">for </span>cast from non-struct pointer to struct pointer
@@ -186,7 +186,7 @@ checker。</p>
 
 <p>在使用 <code class="highlighter-rouge">-enable-checker</code> 或者 <code class="highlighter-rouge">-disable-checker</code> 时，不需要完整的指定某个 checker 的名称，
 也可以是某一类的，如：</p>
-<div class="language-shell highlighter-rouge"><pre class="highlight"><code><span class="gp">$ </span>scan-build -enable-checker alpha ...
+<div class="language-bash highlighter-rouge"><pre class="highlight line-numbers "><code><span class="gp">$ </span>scan-build -enable-checker alpha ...
 <span class="gp">$ </span>scan-build -enable-checker alpha.security ...
 </code></pre>
 </div>
@@ -204,7 +204,7 @@ checker。</p>
 <section class="author-detail">
     <section class="post-footer-item author-card">
         <div class="avatar">
-            <img src="/assets/img/profile.jpg" alt="">
+            <img src="//assets/img/profile.jpg" alt="">
         </div>
         <div class="author-name" rel="author">黄成林</div>
         <div class="bio">
@@ -233,7 +233,7 @@ checker。</p>
             
         </div>
         
-         
+        
         <div class="read-next-item">
             <a href="/%E7%BC%96%E7%A8%8B/c/c++/2014/01/11/cpp-check-static-analysis.html" class="read-next-link"></a>
             <section>

@@ -69,7 +69,7 @@
 
 <ol>
   <li>比较字符串并返回字符串
-    <div class="language-c++ highlighter-rouge"><pre class="highlight"><code><span class="k">return</span> <span class="n">llvm</span><span class="o">::</span><span class="n">StringSwitch</span><span class="o">&lt;</span><span class="k">const</span> <span class="kt">char</span> <span class="o">*&gt;</span><span class="p">(</span><span class="n">Value</span><span class="p">)</span>
+    <div class="language-cpp highlighter-rouge"><pre class="highlight line-numbers "><code><span class="k">return</span> <span class="n">llvm</span><span class="o">::</span><span class="n">StringSwitch</span><span class="o">&lt;</span><span class="k">const</span> <span class="kt">char</span> <span class="o">*&gt;</span><span class="p">(</span><span class="n">Value</span><span class="p">)</span>
   <span class="p">.</span><span class="n">Cases</span><span class="p">(</span><span class="s">"arm9e"</span><span class="p">,</span> <span class="s">"arm946e-s"</span><span class="p">,</span> <span class="s">"arm966e-s"</span><span class="p">,</span> <span class="s">"arm968e-s"</span><span class="p">,</span> <span class="s">"arm926ej-s"</span><span class="p">,</span><span class="s">"armv5"</span><span class="p">)</span>
   <span class="p">.</span><span class="n">Cases</span><span class="p">(</span><span class="s">"arm10e"</span><span class="p">,</span> <span class="s">"arm10tdmi"</span><span class="p">,</span> <span class="s">"armv5"</span><span class="p">)</span>
   <span class="p">.</span><span class="n">Cases</span><span class="p">(</span><span class="s">"arm1020t"</span><span class="p">,</span> <span class="s">"arm1020e"</span><span class="p">,</span> <span class="s">"arm1022e"</span><span class="p">,</span> <span class="s">"arm1026ej-s"</span><span class="p">,</span> <span class="s">"armv5"</span><span class="p">)</span>
@@ -86,7 +86,7 @@
     </div>
   </li>
   <li>比较字符串并返回某种类型的值（如：枚举成员）
-    <div class="language-c++ highlighter-rouge"><pre class="highlight"><code><span class="n">Color</span> <span class="n">color</span> <span class="o">=</span> <span class="n">StringSwitch</span><span class="o">&lt;</span><span class="n">Color</span><span class="o">&gt;</span><span class="p">(</span><span class="n">argv</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+    <div class="language-cpp highlighter-rouge"><pre class="highlight line-numbers "><code><span class="n">Color</span> <span class="n">color</span> <span class="o">=</span> <span class="n">StringSwitch</span><span class="o">&lt;</span><span class="n">Color</span><span class="o">&gt;</span><span class="p">(</span><span class="n">argv</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
   <span class="p">.</span><span class="n">Case</span><span class="p">(</span><span class="s">"red"</span><span class="p">,</span> <span class="n">Red</span><span class="p">)</span>
   <span class="p">.</span><span class="n">Case</span><span class="p">(</span><span class="s">"orange"</span><span class="p">,</span> <span class="n">Orange</span><span class="p">)</span>
   <span class="p">.</span><span class="n">Case</span><span class="p">(</span><span class="s">"yellow"</span><span class="p">,</span> <span class="n">Yellow</span><span class="p">)</span>
@@ -138,7 +138,7 @@
 <section class="author-detail">
     <section class="post-footer-item author-card">
         <div class="avatar">
-            <img src="/assets/img/profile.jpg" alt="">
+            <img src="//assets/img/profile.jpg" alt="">
         </div>
         <div class="author-name" rel="author">黄成林</div>
         <div class="bio">
@@ -167,7 +167,7 @@
             
         </div>
         
-         
+        
         <div class="read-next-item">
             <a href="/linux/raspberryi/2013/09/19/toolchain-for-raspberry-pi.html" class="read-next-link"></a>
             <section>

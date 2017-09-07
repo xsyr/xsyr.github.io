@@ -100,7 +100,7 @@ Installation directory 填写 scan-build 所在的路径。  <br />
 <p>一是禁用 scan-build 的 -v 参数， <em>clang-scanbuild-plugin</em> 插件默认添加了这个参数，
 导致在执行代码检查时 <em>Console Output</em> 充斥太多的执行细节，我们不需要这么详细。  <br />
 打开 scan-build，屏蔽处理 -v 参数的语句，将</p>
-<div class="language-perl highlighter-rouge"><pre class="highlight"><code>  <span class="k">if</span> <span class="p">(</span><span class="nv">$arg</span> <span class="ow">eq</span> <span class="s">"-v"</span><span class="p">)</span> <span class="p">{</span>
+<div class="language-perl highlighter-rouge"><pre class="highlight line-numbers "><code>  <span class="k">if</span> <span class="p">(</span><span class="nv">$arg</span> <span class="ow">eq</span> <span class="s">"-v"</span><span class="p">)</span> <span class="p">{</span>
     <span class="nb">shift</span> <span class="nv">@ARGV</span><span class="p">;</span>
     <span class="nv">$Verbose</span><span class="o">++</span><span class="p">;</span>
     <span class="k">next</span><span class="p">;</span>
@@ -110,7 +110,7 @@ Installation directory 填写 scan-build 所在的路径。  <br />
 
 <p>改为</p>
 
-<div class="language-perl highlighter-rouge"><pre class="highlight"><code>  <span class="k">if</span> <span class="p">(</span><span class="nv">$arg</span> <span class="ow">eq</span> <span class="s">"-v"</span><span class="p">)</span> <span class="p">{</span>
+<div class="language-perl highlighter-rouge"><pre class="highlight line-numbers "><code>  <span class="k">if</span> <span class="p">(</span><span class="nv">$arg</span> <span class="ow">eq</span> <span class="s">"-v"</span><span class="p">)</span> <span class="p">{</span>
     <span class="nb">shift</span> <span class="nv">@ARGV</span><span class="p">;</span>
       <span class="c1">#$Verbose++;</span>
     <span class="k">next</span><span class="p">;</span>
@@ -121,7 +121,7 @@ Installation directory 填写 scan-build 所在的路径。  <br />
 <hr />
 
 <p>二是禁止其执行 xcodebuild 命令。在 <em>RunBuildCommand</em> 函数中将</p>
-<div class="language-perl highlighter-rouge"><pre class="highlight"><code>  <span class="k">my</span> <span class="nv">$IgnoreErrors</span> <span class="o">=</span> <span class="nb">shift</span><span class="p">;</span>
+<div class="language-perl highlighter-rouge"><pre class="highlight line-numbers "><code>  <span class="k">my</span> <span class="nv">$IgnoreErrors</span> <span class="o">=</span> <span class="nb">shift</span><span class="p">;</span>
   <span class="k">my</span> <span class="nv">$Cmd</span> <span class="o">=</span> <span class="nv">$Args</span><span class="o">-&gt;</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
   <span class="k">my</span> <span class="nv">$CCAnalyzer</span> <span class="o">=</span> <span class="nb">shift</span><span class="p">;</span>
 </code></pre>
@@ -129,20 +129,20 @@ Installation directory 填写 scan-build 所在的路径。  <br />
 
 <p>改为</p>
 
-<div class="language-perl highlighter-rouge"><pre class="highlight"><code>  <span class="k">my</span> <span class="nv">$IgnoreErrors</span> <span class="o">=</span> <span class="nb">shift</span><span class="p">;</span>
+<div class="language-perl highlighter-rouge"><pre class="highlight line-numbers "><code>  <span class="k">my</span> <span class="nv">$IgnoreErrors</span> <span class="o">=</span> <span class="nb">shift</span><span class="p">;</span>
   <span class="c1">#my $Cmd = $Args-&gt;[0];</span>
   <span class="k">my</span> <span class="nv">$Cmd</span> <span class="o">=</span> <span class="s">"make"</span><span class="p">;</span>
   <span class="k">my</span> <span class="nv">$CCAnalyzer</span> <span class="o">=</span> <span class="nb">shift</span><span class="p">;</span>
 </code></pre>
 </div>
 
-<div class="language-perl highlighter-rouge"><pre class="highlight"><code>  <span class="k">return</span> <span class="p">(</span><span class="nb">system</span><span class="p">(</span><span class="nv">@$Args</span><span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="mi">8</span><span class="p">);</span>
+<div class="language-perl highlighter-rouge"><pre class="highlight line-numbers "><code>  <span class="k">return</span> <span class="p">(</span><span class="nb">system</span><span class="p">(</span><span class="nv">@$Args</span><span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="mi">8</span><span class="p">);</span>
 </code></pre>
 </div>
 
 <p>改为</p>
 
-<div class="language-perl highlighter-rouge"><pre class="highlight"><code>  <span class="nb">chdir</span><span class="p">(</span><span class="s">"scan-build-dir"</span><span class="p">);</span>
+<div class="language-perl highlighter-rouge"><pre class="highlight line-numbers "><code>  <span class="nb">chdir</span><span class="p">(</span><span class="s">"scan-build-dir"</span><span class="p">);</span>
   <span class="k">return</span> <span class="p">(</span><span class="nb">system</span><span class="p">(</span><span class="s">"make -B"</span><span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="mi">8</span><span class="p">);</span>
 </code></pre>
 </div>
@@ -151,7 +151,7 @@ Installation directory 填写 scan-build 所在的路径。  <br />
 
 <p>三是为 scan-build 准备编译目录和 <em>Makefile</em>。这一步是在项目的配置页面的 <em><code class="highlighter-rouge">Execute Shell</code></em>
 中添加脚本命令：</p>
-<div class="language-shell highlighter-rouge"><pre class="highlight"><code><span class="gp">$ </span>mkdir -p scan-build-dir
+<div class="language-bash highlighter-rouge"><pre class="highlight line-numbers "><code><span class="gp">$ </span>mkdir -p scan-build-dir
 <span class="gp">$ </span><span class="nb">cd </span>scan-build-dir
 <span class="gp">$ </span>cmake -DCMAKE_C_COMPILER<span class="o">=</span>ccc-analyzer -DCMAKE_CXX_COMPILER<span class="o">=</span>c++-analyzer -DCMAKE_C_FLAGS<span class="o">=</span><span class="s2">" -c "</span> -DCMAKE_CXX_FLAGS<span class="o">=</span><span class="s2">" -c "</span> ..
 </code></pre>
@@ -168,7 +168,7 @@ Installation directory 填写 scan-build 所在的路径。  <br />
 <p>然后欺骗 CMake，告诉它现在是 tty 类型的终端，这里使用 <em>LD_PRELOAD</em> 进行 <em>API Hook</em>。</p>
 
 <p>编写如下代码：</p>
-<div class="language-c highlighter-rouge"><pre class="highlight"><code><span class="cm">/**
+<div class="language-c highlighter-rouge"><pre class="highlight line-numbers "><code><span class="cm">/**
  * Overrides the glibc function. Will always return true.
  *
  * Note: Although this should be ok for most applications it can
@@ -184,14 +184,14 @@ Installation directory 填写 scan-build 所在的路径。  <br />
 <p>将上面的代码编译为 <em>libisatty.so</em>。</p>
 
 <p>最后修改 <em>scan-build</em> 的源码</p>
-<div class="language-perl highlighter-rouge"><pre class="highlight"><code>  <span class="nb">chdir</span><span class="p">(</span><span class="s">"scan-build-dir"</span><span class="p">);</span>
+<div class="language-perl highlighter-rouge"><pre class="highlight line-numbers "><code>  <span class="nb">chdir</span><span class="p">(</span><span class="s">"scan-build-dir"</span><span class="p">);</span>
   <span class="k">return</span> <span class="p">(</span><span class="nb">system</span><span class="p">(</span><span class="s">"make -B"</span><span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="mi">8</span><span class="p">);</span>
 </code></pre>
 </div>
 
 <p>改为</p>
 
-<div class="language-perl highlighter-rouge"><pre class="highlight"><code>  <span class="nb">chdir</span><span class="p">(</span><span class="s">"scan-build-dir"</span><span class="p">);</span>
+<div class="language-perl highlighter-rouge"><pre class="highlight line-numbers "><code>  <span class="nb">chdir</span><span class="p">(</span><span class="s">"scan-build-dir"</span><span class="p">);</span>
   <span class="k">return</span> <span class="p">(</span><span class="nb">system</span><span class="p">(</span><span class="s">"LD_PRELOAD=/path/to/libisatty.so make -B"</span><span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="mi">8</span><span class="p">);</span>
 </code></pre>
 </div>
@@ -209,7 +209,7 @@ Installation directory 填写 scan-build 所在的路径。  <br />
 <section class="author-detail">
     <section class="post-footer-item author-card">
         <div class="avatar">
-            <img src="/assets/img/profile.jpg" alt="">
+            <img src="//assets/img/profile.jpg" alt="">
         </div>
         <div class="author-name" rel="author">黄成林</div>
         <div class="bio">
@@ -241,7 +241,7 @@ Installation directory 填写 scan-build 所在的路径。  <br />
             
         </div>
         
-         
+        
         <div class="read-next-item">
             <a href="/%E7%BC%96%E7%A8%8B/c/c++/2014/01/12/clang-static-analyzer.html" class="read-next-link"></a>
             <section>

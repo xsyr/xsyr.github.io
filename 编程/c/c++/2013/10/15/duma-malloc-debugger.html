@@ -78,7 +78,7 @@
 
 <p>下载 <a href="https://sourceforge.net/projects/duma/">DUMA</a>源码并解压，进入源文件目录编译
 并安装：</p>
-<div class="language-shell highlighter-rouge"><pre class="highlight"><code><span class="gp">$ </span>gmake
+<div class="language-bash highlighter-rouge"><pre class="highlight line-numbers "><code><span class="gp">$ </span>gmake
 <span class="gp">$ </span>gmake install <span class="nv">libdir</span><span class="o">=</span>/usr/lib64
 </code></pre>
 </div>
@@ -215,7 +215,7 @@
   </li>
 </ol>
 
-<div class="language-shell highlighter-rouge"><pre class="highlight"><code><span class="gp">$ </span>g++ -g -O0 heap-corruption.cc -o heapC -Wl,-Bstatic,-lduma -Wl,-Bdynamic -pthread
+<div class="language-bash highlighter-rouge"><pre class="highlight line-numbers "><code><span class="gp">$ </span>g++ -g -O0 heap-corruption.cc -o heapC -Wl,-Bstatic,-lduma -Wl,-Bdynamic -pthread
 </code></pre>
 </div>
 
@@ -229,7 +229,7 @@
   </li>
 </ol>
 
-<div class="language-c++ highlighter-rouge"><pre class="highlight"><code><span class="kt">void</span> <span class="o">*</span> <span class="n">DUMA_CDECL</span> <span class="k">operator</span> <span class="k">new</span><span class="p">(</span><span class="n">DUMA_SIZE_T</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="p">,</span> <span class="kt">int</span><span class="p">)</span> <span class="k">throw</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">bad_alloc</span><span class="p">);</span>
+<div class="language-cpp highlighter-rouge"><pre class="highlight line-numbers "><code><span class="kt">void</span> <span class="o">*</span> <span class="n">DUMA_CDECL</span> <span class="k">operator</span> <span class="k">new</span><span class="p">(</span><span class="n">DUMA_SIZE_T</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="p">,</span> <span class="kt">int</span><span class="p">)</span> <span class="k">throw</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">bad_alloc</span><span class="p">);</span>
 <span class="kt">void</span> <span class="o">*</span> <span class="n">DUMA_CDECL</span> <span class="k">operator</span> <span class="k">new</span><span class="p">(</span><span class="n">DUMA_SIZE_T</span><span class="p">,</span> <span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">nothrow_t</span> <span class="o">&amp;</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="p">,</span> <span class="kt">int</span><span class="p">)</span> <span class="k">throw</span><span class="p">();</span>
 <span class="kt">void</span>   <span class="n">DUMA_CDECL</span> <span class="k">operator</span> <span class="k">delete</span><span class="p">(</span><span class="kt">void</span> <span class="o">*</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="p">,</span> <span class="kt">int</span><span class="p">)</span> <span class="k">throw</span><span class="p">();</span>
 <span class="kt">void</span>   <span class="n">DUMA_CDECL</span> <span class="k">operator</span> <span class="k">delete</span><span class="p">(</span><span class="kt">void</span> <span class="o">*</span><span class="p">,</span> <span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">nothrow_t</span> <span class="o">&amp;</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="p">,</span> <span class="kt">int</span><span class="p">)</span> <span class="k">throw</span><span class="p">();</span>
@@ -258,7 +258,7 @@
 <section class="author-detail">
     <section class="post-footer-item author-card">
         <div class="avatar">
-            <img src="/assets/img/profile.jpg" alt="">
+            <img src="//assets/img/profile.jpg" alt="">
         </div>
         <div class="author-name" rel="author">黄成林</div>
         <div class="bio">
@@ -287,7 +287,7 @@
             
         </div>
         
-         
+        
         <div class="read-next-item">
             <a href="/%E7%BC%96%E7%A8%8B/c/c++/2013/10/14/mix-static-and-dynamic-linking.html" class="read-next-link"></a>
             <section>

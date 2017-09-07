@@ -72,7 +72,7 @@
 
 <!-- more -->
 
-<div class="language-c++ highlighter-rouge"><pre class="highlight"><code>
+<div class="language-cpp highlighter-rouge"><pre class="highlight line-numbers "><code>
 <span class="cp">#include &lt;string&gt;
 #include &lt;iostream&gt;
 #include &lt;algorithm&gt;
@@ -180,7 +180,7 @@
 <h3 id="5-unlabeledvaluearg">5. UnlabeledValueArg</h3>
 
 <p>UnlabeledValueArg&lt;T&gt; 其实就是 getopt 中的 参数，它也是一个模板类。例如：</p>
-<div class="language-shell highlighter-rouge"><pre class="highlight"><code><span class="gp">$ </span>./app -o ouput -i input 123  45.6  abcd
+<div class="language-bash highlighter-rouge"><pre class="highlight line-numbers "><code><span class="gp">$ </span>./app -o ouput -i input 123  45.6  abcd
 </code></pre>
 </div>
 
@@ -195,7 +195,7 @@ UnlabeledValueArg&lt;float&gt; 和 UnlabeledValueArg&lt;std::string&gt; 。它�
 解析为对应的模板类型，如 UnlabeledMultiArg&lt;int&gt; 则要求这些参数必须能够解析成
 整型。它的 getValue 返回 <strong>std::vector&lt;T&gt;</strong></p>
 
-<div class="language-shell highlighter-rouge"><pre class="highlight"><code><span class="gp">$ </span>./app -o ouput -i input 123  45.6  abcd arg1 arg2 arg3
+<div class="language-bash highlighter-rouge"><pre class="highlight line-numbers "><code><span class="gp">$ </span>./app -o ouput -i input 123  45.6  abcd arg1 arg2 arg3
 </code></pre>
 </div>
 
@@ -209,7 +209,7 @@ UnlabeledValueArg&lt;float&gt; 和 UnlabeledValueArg&lt;std::string&gt; 。它�
 
 <p>例如，想让 file 和 url 选项二选一：</p>
 
-<div class="language-c++ highlighter-rouge"><pre class="highlight"><code><span class="n">ValueArg</span><span class="o">&lt;</span><span class="n">string</span><span class="o">&gt;</span>  <span class="n">fileArg</span><span class="p">(</span><span class="s">"f"</span><span class="p">,</span><span class="s">"file"</span><span class="p">,</span><span class="s">"File name to read"</span><span class="p">,</span><span class="nb">true</span><span class="p">,</span><span class="s">"/dev/null"</span><span class="p">,</span> <span class="s">"filename"</span><span class="p">);</span>
+<div class="language-cpp highlighter-rouge"><pre class="highlight line-numbers "><code><span class="n">ValueArg</span><span class="o">&lt;</span><span class="n">string</span><span class="o">&gt;</span>  <span class="n">fileArg</span><span class="p">(</span><span class="s">"f"</span><span class="p">,</span><span class="s">"file"</span><span class="p">,</span><span class="s">"File name to read"</span><span class="p">,</span><span class="nb">true</span><span class="p">,</span><span class="s">"/dev/null"</span><span class="p">,</span> <span class="s">"filename"</span><span class="p">);</span>
 <span class="n">ValueArg</span><span class="o">&lt;</span><span class="n">string</span><span class="o">&gt;</span>  <span class="n">urlArg</span><span class="p">(</span><span class="s">"u"</span><span class="p">,</span><span class="s">"url"</span><span class="p">,</span><span class="s">"URL to load"</span><span class="p">,</span><span class="nb">true</span><span class="p">,</span> <span class="s">"http://example.com"</span><span class="p">,</span> <span class="s">"URL"</span><span class="p">);</span>
 
 <span class="n">cmd</span><span class="p">.</span><span class="n">xorAdd</span><span class="p">(</span> <span class="n">fileArg</span><span class="p">,</span> <span class="n">urlArg</span> <span class="p">);</span>
@@ -221,7 +221,7 @@ UnlabeledValueArg&lt;float&gt; 和 UnlabeledValueArg&lt;std::string&gt; 。它�
 
 <p>它可以多于两个 option并且是不同类型的 option：</p>
 
-<div class="language-c++ highlighter-rouge"><pre class="highlight"><code><span class="n">SwitchArg</span>  <span class="n">stdinArg</span><span class="p">(</span><span class="s">"s"</span><span class="p">,</span> <span class="s">"stdin"</span><span class="p">,</span> <span class="s">"Read from STDIN"</span><span class="p">,</span> <span class="nb">false</span><span class="p">);</span>
+<div class="language-cpp highlighter-rouge"><pre class="highlight line-numbers "><code><span class="n">SwitchArg</span>  <span class="n">stdinArg</span><span class="p">(</span><span class="s">"s"</span><span class="p">,</span> <span class="s">"stdin"</span><span class="p">,</span> <span class="s">"Read from STDIN"</span><span class="p">,</span> <span class="nb">false</span><span class="p">);</span>
 <span class="n">ValueArg</span><span class="o">&lt;</span><span class="n">string</span><span class="o">&gt;</span>  <span class="n">fileArg</span><span class="p">(</span><span class="s">"f"</span><span class="p">,</span><span class="s">"file"</span><span class="p">,</span><span class="s">"File name to read"</span><span class="p">,</span><span class="nb">true</span><span class="p">,</span><span class="s">"/dev/null"</span><span class="p">,</span> <span class="s">"filename"</span><span class="p">);</span>
 <span class="n">ValueArg</span><span class="o">&lt;</span><span class="n">string</span><span class="o">&gt;</span>  <span class="n">urlArg</span><span class="p">(</span><span class="s">"u"</span><span class="p">,</span><span class="s">"url"</span><span class="p">,</span><span class="s">"URL to load"</span><span class="p">,</span><span class="nb">true</span><span class="p">,</span> <span class="s">"http://example.com"</span><span class="p">,</span> <span class="s">"URL"</span><span class="p">);</span>
 
@@ -237,14 +237,14 @@ UnlabeledValueArg&lt;float&gt; 和 UnlabeledValueArg&lt;std::string&gt; 。它�
 <h3 id="2-只支持长名的option">2. 只支持长名的option</h3>
 
 <p>只要在 option 的构造函数的短名参数中复制空串(““)即可：</p>
-<div class="language-c++ highlighter-rouge"><pre class="highlight"><code><span class="n">ValueArg</span><span class="o">&lt;</span><span class="n">string</span><span class="o">&gt;</span>  <span class="n">fileArg</span><span class="p">(</span><span class="s">""</span><span class="p">,</span><span class="s">"file"</span><span class="p">,</span><span class="s">"File name"</span><span class="p">,</span><span class="nb">true</span><span class="p">,</span><span class="s">"homer"</span><span class="p">,</span><span class="s">"filename"</span><span class="p">);</span>
+<div class="language-cpp highlighter-rouge"><pre class="highlight line-numbers "><code><span class="n">ValueArg</span><span class="o">&lt;</span><span class="n">string</span><span class="o">&gt;</span>  <span class="n">fileArg</span><span class="p">(</span><span class="s">""</span><span class="p">,</span><span class="s">"file"</span><span class="p">,</span><span class="s">"File name"</span><span class="p">,</span><span class="nb">true</span><span class="p">,</span><span class="s">"homer"</span><span class="p">,</span><span class="s">"filename"</span><span class="p">);</span>
 
 <span class="n">SwitchArg</span>  <span class="n">caseSwitch</span><span class="p">(</span><span class="s">""</span><span class="p">,</span><span class="s">"upperCase"</span><span class="p">,</span><span class="s">"Print in upper case"</span><span class="p">,</span><span class="nb">false</span><span class="p">);</span>
 </code></pre>
 </div>
 
 <h3 id="3-为-valuearg-指定枚举值">3. 为 ValueArg 指定枚举值</h3>
-<div class="language-c++ highlighter-rouge"><pre class="highlight"><code><span class="n">vector</span><span class="o">&lt;</span><span class="n">string</span><span class="o">&gt;</span> <span class="n">allowed</span><span class="p">;</span>
+<div class="language-cpp highlighter-rouge"><pre class="highlight line-numbers "><code><span class="n">vector</span><span class="o">&lt;</span><span class="n">string</span><span class="o">&gt;</span> <span class="n">allowed</span><span class="p">;</span>
 <span class="n">allowed</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="s">"homer"</span><span class="p">);</span>
 <span class="n">allowed</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="s">"marge"</span><span class="p">);</span>
 <span class="n">allowed</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="s">"bart"</span><span class="p">);</span>
@@ -264,7 +264,7 @@ UnlabeledValueArg&lt;float&gt; 和 UnlabeledValueArg&lt;std::string&gt; 。它�
 <p>在 <code class="highlighter-rouge">c++ #include &lt;tclap/CmdLine.h&gt;</code> 前定义 TCLAP_SETBASE_ZERO
 宏。</p>
 
-<div class="language-c++ highlighter-rouge"><pre class="highlight"><code><span class="cp">#define TCLAP_SETBASE_ZERO 1
+<div class="language-cpp highlighter-rouge"><pre class="highlight line-numbers "><code><span class="cp">#define TCLAP_SETBASE_ZERO 1
 </span>
 <span class="cp">#include &lt;tclap/CmdLine.h&gt;
 </span></code></pre>
@@ -281,7 +281,7 @@ UnlabeledValueArg&lt;float&gt; 和 UnlabeledValueArg&lt;std::string&gt; 。它�
 <section class="author-detail">
     <section class="post-footer-item author-card">
         <div class="avatar">
-            <img src="/assets/img/profile.jpg" alt="">
+            <img src="//assets/img/profile.jpg" alt="">
         </div>
         <div class="author-name" rel="author">黄成林</div>
         <div class="bio">
@@ -310,7 +310,7 @@ UnlabeledValueArg&lt;float&gt; 和 UnlabeledValueArg&lt;std::string&gt; 。它�
             
         </div>
         
-         
+        
         <div class="read-next-item">
             <a href="/%E7%BC%96%E7%A8%8B/2013/09/26/write-an-reliability-event-loop.html" class="read-next-link"></a>
             <section>

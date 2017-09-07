@@ -84,12 +84,12 @@
 <h2 id="安装">安装</h2>
 
 <p>很多 Linux 发行版的源都有已经编译好的二进制包，直接安装即可。openSUSE下的安装：</p>
-<div class="language-shell highlighter-rouge"><pre class="highlight"><code><span class="gp">$ </span>zypper install valgrind
+<div class="language-bash highlighter-rouge"><pre class="highlight line-numbers "><code><span class="gp">$ </span>zypper install valgrind
 </code></pre>
 </div>
 
 <p>也可以<a href="http://valgrind.org/downloads/">源码</a>安装：</p>
-<div class="language-shell highlighter-rouge"><pre class="highlight"><code><span class="gp">$ </span>./configure; make; sudo make install
+<div class="language-bash highlighter-rouge"><pre class="highlight line-numbers "><code><span class="gp">$ </span>./configure; make; sudo make install
 </code></pre>
 </div>
 
@@ -150,14 +150,14 @@ Valgrind 会对系统调用的所有参数做检查，包括：
 而且，不能同时与其他的 allcator 同时使用，否则会导致 Valgrind 无法正常正常工作。</p>
 
 <p>Valgrind 的调用格式如下：</p>
-<div class="language-shell highlighter-rouge"><pre class="highlight"><code>valgrind --tool<span class="o">=</span>memcheck <span class="o">[</span>valgrind-options] your-prog <span class="o">[</span>your-prog-options]
+<div class="language-bash highlighter-rouge"><pre class="highlight line-numbers "><code>valgrind --tool<span class="o">=</span>memcheck <span class="o">[</span>valgrind-options] your-prog <span class="o">[</span>your-prog-options]
 </code></pre>
 </div>
 
 <p><strong>–tool</strong> 参数指定使用的检测工具，即上面提到的。默认为 memcheck。</p>
 
 <p>Valgrind 生成的报告信息如下：</p>
-<div class="highlighter-rouge"><pre class="highlight"><code>==10772== Memcheck, a memory error detector
+<div class="highlighter-rouge"><pre class="highlight line-numbers "><code>==10772== Memcheck, a memory error detector
 ==10772== Copyright (C) 2002-2012, and GNU GPL'd, by Julian Seward et al.
 ==10772== Using Valgrind-3.8.1 and LibVEX; rerun with -h for copyright info
 ==10772== Command: ls -l
@@ -406,7 +406,7 @@ Memcheck 不会检查这些区域内的内存是否是可访问的。</p>
   <li>./.valgrindrc
 Valgrind 会按照从上往下的顺序读取，命令行中指定的相同选项会覆盖它们。每个选项应该
 以工具名开头+冒号+选项=值的格式设置。如：
-    <div class="highlighter-rouge"><pre class="highlight"><code>--memcheck:leak-check=yes
+    <div class="highlighter-rouge"><pre class="highlight line-numbers "><code>--memcheck:leak-check=yes
 </code></pre>
     </div>
   </li>
@@ -431,7 +431,7 @@ Valgrind 会按照从上往下的顺序读取，命令行中指定的相同选�
 <section class="author-detail">
     <section class="post-footer-item author-card">
         <div class="avatar">
-            <img src="/assets/img/profile.jpg" alt="">
+            <img src="//assets/img/profile.jpg" alt="">
         </div>
         <div class="author-name" rel="author">黄成林</div>
         <div class="bio">
@@ -460,7 +460,7 @@ Valgrind 会按照从上往下的顺序读取，命令行中指定的相同选�
             
         </div>
         
-         
+        
         <div class="read-next-item">
             <a href="/linux/%E7%BC%96%E7%A8%8B/2013/10/21/use-strace-plus-to-strace-system-call-and-signal.html" class="read-next-link"></a>
             <section>

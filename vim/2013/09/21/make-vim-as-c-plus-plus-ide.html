@@ -47,9 +47,9 @@
 <header class="g-banner post-header post-pattern-circuitBoard bgcolor-default post-no-cover" data-theme="default">
     <div class="post-wrapper">
         <div class="post-tags">
-             
             
-            <a href="tags#Vim" class="post-tag">Vim</a>
+            
+            <a href="/tags#Vim" class="post-tag">Vim</a>
             
             
         </div>
@@ -81,7 +81,7 @@ syntastic，vcscommand，doxygen-support 等大臣辅佐，写起代码来有滋
 <p>使用源码编译安装 Vim 的好处是能够用上最新的补丁。安装很简单：</p>
 
 <h4 id="获取源码">获取源码</h4>
-<div class="language-shell highlighter-rouge"><pre class="highlight"><code><span class="gp">$ </span><span class="nb">cd</span> <span class="nv">$vimsrc</span>
+<div class="language-bash highlighter-rouge"><pre class="highlight line-numbers "><code><span class="gp">$ </span><span class="nb">cd</span> <span class="nv">$vimsrc</span>
 <span class="gp">$ </span>hg clone https://vim.googlecode.com/hg/ vim
 <span class="gp">$ </span><span class="nb">cd </span>vim
 <span class="gp">$ </span>hg pull
@@ -90,7 +90,7 @@ syntastic，vcscommand，doxygen-support 等大臣辅佐，写起代码来有滋
 </div>
 
 <h4 id="编译安装">编译安装</h4>
-<div class="language-shell highlighter-rouge"><pre class="highlight"><code><span class="gp">$ </span>make uninstall
+<div class="language-bash highlighter-rouge"><pre class="highlight line-numbers "><code><span class="gp">$ </span>make uninstall
 <span class="gp">$ </span>make distclean
 <span class="gp">$ </span>make uninstall
 <span class="gp">$ </span>make distclean
@@ -118,12 +118,12 @@ syntastic，vcscommand，doxygen-support 等大臣辅佐，写起代码来有滋
 <h4 id="配置-vim-参数">配置 Vim 参数</h4>
 
 <p>配置缩进，高亮搜索，展开 tab 等参数：</p>
-<div class="language-shell highlighter-rouge"><pre class="highlight"><code><span class="gp">$ </span>gvim ~/.vimrc
+<div class="language-bash highlighter-rouge"><pre class="highlight line-numbers "><code><span class="gp">$ </span>gvim ~/.vimrc
 </code></pre>
 </div>
 <p>写入：</p>
 
-<div class="language-vim highlighter-rouge"><pre class="highlight"><code><span class="k">set</span> tabstop<span class="p">=</span><span class="m">4</span>
+<div class="language-vim highlighter-rouge"><pre class="highlight line-numbers "><code><span class="k">set</span> tabstop<span class="p">=</span><span class="m">4</span>
 <span class="k">set</span> expandtab
 <span class="k">set</span> softtabstop<span class="p">=</span><span class="m">4</span>
 <span class="k">set</span> shiftwidth<span class="p">=</span><span class="m">4</span>
@@ -145,7 +145,8 @@ syntastic，vcscommand，doxygen-support 等大臣辅佐，写起代码来有滋
 
 <p>根据 <a href="https://github.com/Shougo/neobundle.vim">NeoBundle</a> 的 README 步骤即可。
 <strong>.vimrc</strong> 中写入：</p>
-<div class="language-vim highlighter-rouge"><pre class="highlight"><code><span class="c">" neobundle {{{</span>
+
+<div class="language-vim highlighter-rouge"><pre class="highlight line-numbers "><code><span class="c">" neobundle {{{</span>
 <span class="k">set</span> nocompatible               " Be iMproved
 
 <span class="k">if</span> has<span class="p">(</span><span class="s1">'vim_starting'</span><span class="p">)</span>
@@ -178,12 +179,12 @@ NeoBundleCheck
 
 <h4 id="在-vimrc-中添加安装-youcompleteme-的命令">在 .vimrc 中添加安装 YouCompleteMe 的命令</h4>
 
-<div class="language-vim highlighter-rouge"><pre class="highlight"><code>NeoBundle <span class="s1">'git://github.com/Valloric/YouCompleteMe.git'</span>
+<div class="language-vim highlighter-rouge"><pre class="highlight line-numbers "><code>NeoBundle <span class="s1">'git://github.com/Valloric/YouCompleteMe.git'</span>
 </code></pre>
 </div>
 
 <p>启动 Vim clone YouCompleteMe 的源码，进入源码的路径执行编译命令：</p>
-<div class="language-shell highlighter-rouge"><pre class="highlight"><code><span class="gp">$ </span><span class="nb">cd</span> ~/.vim/bundle/YouCompleteMe/
+<div class="language-bash highlighter-rouge"><pre class="highlight line-numbers "><code><span class="gp">$ </span><span class="nb">cd</span> ~/.vim/bundle/YouCompleteMe/
 <span class="gp">$ </span>mkdir build
 <span class="gp">$ </span><span class="nb">cd </span>build
 <span class="gp">$ </span>cmake -G <span class="s2">"Unix Makefiles"</span>  -DUSE_SYSTEM_LIBCLANG<span class="o">=</span>ON ~/.vim/bundle/YouCompleteMe/cpp
@@ -193,7 +194,7 @@ NeoBundleCheck
 
 <h4 id="根据喜好配置快捷键">根据喜好配置快捷键</h4>
 
-<div class="language-vim highlighter-rouge"><pre class="highlight"><code><span class="c">" YouCompleteMe {{{</span>
+<div class="language-vim highlighter-rouge"><pre class="highlight line-numbers "><code><span class="c">" YouCompleteMe {{{</span>
 
 <span class="k">let</span> <span class="nv">g:ycm_min_num_of_chars_for_completion</span> <span class="p">=</span> <span class="m">1</span>
 <span class="k">let</span> <span class="nv">g:ycm_confirm_extra_conf</span> <span class="p">=</span> <span class="m">0</span>
@@ -222,13 +223,13 @@ NeoBundleCheck
 
 <p><a href="https://github.com/scrooloose/syntastic">syntastic</a> 与 YouComleteMe 结合对语法
 进行检查，并将警告和错误信息显示在行号那一栏的左侧。添加下面的命令安装 syntastic：</p>
-<div class="language-vim highlighter-rouge"><pre class="highlight"><code>$ NeoBundle <span class="s1">'git://github.com/scrooloose/syntastic.git'</span>
+<div class="language-vim highlighter-rouge"><pre class="highlight line-numbers "><code>$ NeoBundle <span class="s1">'git://github.com/scrooloose/syntastic.git'</span>
 </code></pre>
 </div>
 
 <p>配置警告和错误提示符号，启用高亮，提示信息的格式：</p>
 
-<div class="language-vim highlighter-rouge"><pre class="highlight"><code><span class="c">" syntastic {{{</span>
+<div class="language-vim highlighter-rouge"><pre class="highlight line-numbers "><code><span class="c">" syntastic {{{</span>
 <span class="k">let</span> <span class="nv">g:syntastic_error_symbol</span><span class="p">=</span><span class="s1">'✗'</span>
 <span class="k">let</span> <span class="nv">g:syntastic_warning_symbol</span><span class="p">=</span><span class="s1">'⚠'</span>
 <span class="k">let</span> <span class="nv">g:syntastic_enable_highlighting</span> <span class="p">=</span> <span class="m">1</span>
@@ -249,7 +250,7 @@ NeoBundleCheck
 </ol>
 
 <p>安装很简单，添加下面的命令到 .vimrc 即可：</p>
-<div class="language-vim highlighter-rouge"><pre class="highlight"><code>NeoBundle <span class="s1">'git://github.com/majutsushi/tagbar.git'</span>
+<div class="language-vim highlighter-rouge"><pre class="highlight line-numbers "><code>NeoBundle <span class="s1">'git://github.com/majutsushi/tagbar.git'</span>
 NeoBundle <span class="s1">'git://github.com/scrooloose/nerdtree.git'</span>
 NeoBundle <span class="s1">'git://github.com/wesleyche/SrcExpl.git'</span>git
 </code></pre>
@@ -257,7 +258,7 @@ NeoBundle <span class="s1">'git://github.com/wesleyche/SrcExpl.git'</span>git
 
 <p>配置各个插件的显示位置，开启和关闭的快捷键：</p>
 
-<div class="language-vim highlighter-rouge"><pre class="highlight"><code><span class="c">" tagbar {{{</span>
+<div class="language-vim highlighter-rouge"><pre class="highlight line-numbers "><code><span class="c">" tagbar {{{</span>
 <span class="k">let</span> <span class="nv">g:tagbar_left</span> <span class="p">=</span> <span class="m">1</span>
 <span class="k">let</span> <span class="nv">g:tagbar_singleclick</span> <span class="p">=</span> <span class="m">1</span>
 <span class="k">let</span> <span class="nv">g:tagbar_autoshowtag</span> <span class="p">=</span> <span class="m">1</span>
@@ -312,13 +313,13 @@ nmap <span class="p">&lt;</span>Leader<span class="p">&gt;</span>nt  <span class
 <p><a href="https://github.com/SirVer/ultisnips">ultisnips</a>内置了很多代码片段，并且支持自定义。</p>
 
 <p>安装：</p>
-<div class="language-vim highlighter-rouge"><pre class="highlight"><code>NeoBundle <span class="s1">'git://github.com/SirVer/ultisnips.git'</span>
+<div class="language-vim highlighter-rouge"><pre class="highlight line-numbers "><code>NeoBundle <span class="s1">'git://github.com/SirVer/ultisnips.git'</span>
 </code></pre>
 </div>
 
 <p>配置快捷键：</p>
 
-<div class="language-vim highlighter-rouge"><pre class="highlight"><code><span class="c">" ultisnipptes {{{</span>
+<div class="language-vim highlighter-rouge"><pre class="highlight line-numbers "><code><span class="c">" ultisnipptes {{{</span>
 <span class="k">let</span> <span class="nv">g:UltiSnipsExpandTrigger</span><span class="p">=</span><span class="s2">"&lt;TAB&gt;"</span>
 <span class="k">let</span> <span class="nv">g:UltiSnipsJumpForwardTrigger</span><span class="p">=</span><span class="s2">"&lt;TAB&gt;"</span>
 <span class="k">let</span> <span class="nv">g:UltiSnipsJumpBackwardTrigger</span><span class="p">=</span><span class="s2">"&lt;S-TAB&gt;"</span>
@@ -329,13 +330,13 @@ nmap <span class="p">&lt;</span>Leader<span class="p">&gt;</span>nt  <span class
 
 <h2 id="使用-delimitmate-进行括号自动补全">使用 delimitMate 进行括号自动补全</h2>
 
-<div class="language-vim highlighter-rouge"><pre class="highlight"><code>NeoBundle <span class="s1">'git://github.com/Raimondi/delimitMate.git'</span>
+<div class="language-vim highlighter-rouge"><pre class="highlight line-numbers "><code>NeoBundle <span class="s1">'git://github.com/Raimondi/delimitMate.git'</span>
 </code></pre>
 </div>
 
 <p>配置回车自动缩进等参数：</p>
 
-<div class="language-vim highlighter-rouge"><pre class="highlight"><code><span class="c">" delimitMate {{{</span>
+<div class="language-vim highlighter-rouge"><pre class="highlight line-numbers "><code><span class="c">" delimitMate {{{</span>
 
 <span class="k">let</span> delimitMate_expand_cr      <span class="p">=</span> <span class="m">1</span>
 <span class="k">let</span> delimitMate_jump_expansion <span class="p">=</span> <span class="m">1</span>
@@ -346,13 +347,13 @@ nmap <span class="p">&lt;</span>Leader<span class="p">&gt;</span>nt  <span class
 
 <h2 id="安装-solarized-主题">安装 solarized 主题</h2>
 
-<div class="language-vim highlighter-rouge"><pre class="highlight"><code>  NeoBundle <span class="s1">'git://github.com/Raimondi/delimitMate.git'</span>
+<div class="language-vim highlighter-rouge"><pre class="highlight line-numbers "><code>  NeoBundle <span class="s1">'git://github.com/Raimondi/delimitMate.git'</span>
 </code></pre>
 </div>
 
 <p>使用 dark 背景：</p>
 
-<div class="language-vim highlighter-rouge"><pre class="highlight"><code><span class="c">" Solarized Colorscheme Config {{{</span>
+<div class="language-vim highlighter-rouge"><pre class="highlight line-numbers "><code><span class="c">" Solarized Colorscheme Config {{{</span>
 <span class="k">let</span> <span class="nv">g:solarized_termtrans</span><span class="p">=</span><span class="m">1</span>    "default value <span class="k">is</span> <span class="m">0</span>
 <span class="k">let</span> <span class="nv">g:solarized_hitrail</span><span class="p">=</span><span class="m">1</span>    "default value <span class="k">is</span> <span class="m">0</span>
 syntax enable
@@ -365,19 +366,19 @@ syntax enable
 
 <h2 id="安装-vcscommand-操作各种版本控制系统">安装 VCSCommand 操作各种版本控制系统</h2>
 
-<div class="language-vim highlighter-rouge"><pre class="highlight"><code>NeoBundle <span class="s1">'git://repo.or.cz/vcscommand'</span>
+<div class="language-vim highlighter-rouge"><pre class="highlight line-numbers "><code>NeoBundle <span class="s1">'git://repo.or.cz/vcscommand'</span>
 </code></pre>
 </div>
 
 <h2 id="使用-doxygen-support-编写-doxygen-注释">使用 doxygen-support 编写 doxygen 注释</h2>
 
-<div class="language-vim highlighter-rouge"><pre class="highlight"><code>NeoBundle <span class="s1">'https://github.com/vim-scripts/doxygen-support.vim.git'</span>
+<div class="language-vim highlighter-rouge"><pre class="highlight line-numbers "><code>NeoBundle <span class="s1">'https://github.com/vim-scripts/doxygen-support.vim.git'</span>
 </code></pre>
 </div>
 
 <p>doxygen-support 提供很多全局变量，可以通过修改它们的值实现自定义代码风格。</p>
 
-<div class="language-vim highlighter-rouge"><pre class="highlight"><code><span class="c">" doxgen {{{</span>
+<div class="language-vim highlighter-rouge"><pre class="highlight line-numbers "><code><span class="c">" doxgen {{{</span>
 <span class="k">let</span> <span class="nv">g:DoxygenToolkit_paramTag_post</span> <span class="p">=</span> <span class="s2">" "</span>
 <span class="k">let</span> <span class="nv">g:load_doxygen_syntax</span> <span class="p">=</span> <span class="m">1</span>
 
@@ -404,7 +405,7 @@ syntax enable
 <section class="author-detail">
     <section class="post-footer-item author-card">
         <div class="avatar">
-            <img src="/assets/img/profile.jpg" alt="">
+            <img src="//assets/img/profile.jpg" alt="">
         </div>
         <div class="author-name" rel="author">黄成林</div>
         <div class="bio">
@@ -433,7 +434,7 @@ syntax enable
             
         </div>
         
-         
+        
         <div class="read-next-item">
             <a href="/%E7%BC%96%E7%A8%8B/2013/09/20/llvm-clang-stringswitch-dot-h.html" class="read-next-link"></a>
             <section>

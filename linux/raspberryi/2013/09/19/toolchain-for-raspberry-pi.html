@@ -47,11 +47,11 @@
 <header class="g-banner post-header post-pattern-circuitBoard bgcolor-default post-no-cover" data-theme="default">
     <div class="post-wrapper">
         <div class="post-tags">
-             
             
-            <a href="tags#IoT" class="post-tag">IoT</a>
             
-            <a href="tags#RaspberryPi" class="post-tag">RaspberryPi</a>
+            <a href="/tags#IoT" class="post-tag">IoT</a>
+            
+            <a href="/tags#RaspberryPi" class="post-tag">RaspberryPi</a>
             
             
         </div>
@@ -88,21 +88,21 @@
 </ol>
 
 <p>先设置好 toolchain 的安装路径：</p>
-<div class="language-shell highlighter-rouge"><pre class="highlight"><code><span class="gp">$ </span><span class="nv">TOOL_CHAIN_DIR</span><span class="o">=</span>/opt/arm-rpi-toolchain
+<div class="language-bash highlighter-rouge"><pre class="highlight line-numbers "><code><span class="gp">$ </span><span class="nv">TOOL_CHAIN_DIR</span><span class="o">=</span>/opt/arm-rpi-toolchain
 <span class="gp">$ </span><span class="nv">TARGET_DIR</span><span class="o">=</span><span class="nv">$TOOL_CHAIN_DIR</span>/arm-rpi-tools
 <span class="gp">$ </span><span class="nv">SYSROOT_DIR</span><span class="o">=</span><span class="nv">$TOOL_CHAIN_DIR</span>/sysroot
 </code></pre>
 </div>
 
 <p>Raspberry Pi 使用的是 arm1176jzf-s CPU，根据其支持的参数设置好需要的编译选项：</p>
-<div class="highlighter-rouge"><pre class="highlight"><code>$ ARCH=armv6zk
-$ CPU=arm1176jzf-s
-$ WITH_FLOAT=hard
-$ WITH_ABI=aapcs-vfp
-$ WITH_FPU=vfp
-$ HOST_ALIAS=$MACHTYPE
-$ TARGET_ALIAS="armv6-rpi-linux-gnueabihf"
-$ PKGVERSION="arm toolchain for rpi"
+<div class="language-bash highlighter-rouge"><pre class="highlight line-numbers "><code><span class="gp">$ </span><span class="nv">ARCH</span><span class="o">=</span>armv6zk
+<span class="gp">$ </span><span class="nv">CPU</span><span class="o">=</span>arm1176jzf-s
+<span class="gp">$ </span><span class="nv">WITH_FLOAT</span><span class="o">=</span>hard
+<span class="gp">$ </span><span class="nv">WITH_ABI</span><span class="o">=</span>aapcs-vfp
+<span class="gp">$ </span><span class="nv">WITH_FPU</span><span class="o">=</span>vfp
+<span class="gp">$ </span><span class="nv">HOST_ALIAS</span><span class="o">=</span><span class="nv">$MACHTYPE</span>
+<span class="gp">$ </span><span class="nv">TARGET_ALIAS</span><span class="o">=</span><span class="s2">"armv6-rpi-linux-gnueabihf"</span>
+<span class="gp">$ </span><span class="nv">PKGVERSION</span><span class="o">=</span><span class="s2">"arm toolchain for rpi"</span>
 </code></pre>
 </div>
 
@@ -124,7 +124,7 @@ $ PKGVERSION="arm toolchain for rpi"
 
 <p>Pedora 是基于 Linux 3.6.11 的内核，所以这里安装的 Linux 头文件也是选择 3.6.11 内核。
 先到 <a href="http://kernel.org">kernel.org</a> 下载 Linux 3.6.11 的源文件，将其解压目录 $linux并安装：</p>
-<div class="language-shell highlighter-rouge"><pre class="highlight"><code><span class="gp">$ </span><span class="nb">cd</span> <span class="nv">$linux</span>
+<div class="language-bash highlighter-rouge"><pre class="highlight line-numbers "><code><span class="gp">$ </span><span class="nb">cd</span> <span class="nv">$linux</span>
 <span class="gp">$ </span>make headers_check
 <span class="gp">$ </span>make <span class="nv">ARCH</span><span class="o">=</span>arm <span class="nv">INSTALL_HDR_PATH</span><span class="o">=</span><span class="nv">$SYSROOT_DIR</span>/usr headers_install
 </code></pre>
@@ -132,7 +132,7 @@ $ PKGVERSION="arm toolchain for rpi"
 
 <h2 id="安装-gmp">安装 gmp</h2>
 
-<div class="language-shell highlighter-rouge"><pre class="highlight"><code><span class="gp">$ </span><span class="nb">cd</span> <span class="nv">$gmp</span>
+<div class="language-bash highlighter-rouge"><pre class="highlight line-numbers "><code><span class="gp">$ </span><span class="nb">cd</span> <span class="nv">$gmp</span>
 <span class="gp">$ </span>mkdir build
 <span class="gp">$ </span><span class="nb">cd </span>build
 <span class="gp">$ </span>../.bootstrap
@@ -143,7 +143,7 @@ $ PKGVERSION="arm toolchain for rpi"
 
 <p>参数 <code class="highlighter-rouge">--disable-shared</code> 是因为编译 gcc 时会依赖 gmp，不需要生成动态库。
 如果生成动态库，必须将安装目录添加到 <strong>LD_LIBRARY_PATH</strong> 中。</p>
-<div class="language-shell highlighter-rouge"><pre class="highlight"><code><span class="gp">$ </span><span class="nb">export </span><span class="nv">LD_LIBRARY_PATH</span><span class="o">=</span><span class="s2">"</span><span class="nv">$TARGET_DIR</span><span class="s2">/lib64:</span><span class="nv">$LD_LIBRARY_PATH</span><span class="s2">"</span>
+<div class="language-bash highlighter-rouge"><pre class="highlight line-numbers "><code><span class="gp">$ </span><span class="nb">export </span><span class="nv">LD_LIBRARY_PATH</span><span class="o">=</span><span class="s2">"</span><span class="nv">$TARGET_DIR</span><span class="s2">/lib64:</span><span class="nv">$LD_LIBRARY_PATH</span><span class="s2">"</span>
 </code></pre>
 </div>
 
@@ -153,7 +153,7 @@ $ PKGVERSION="arm toolchain for rpi"
 
 <h2 id="安装-mpfr">安装 mpfr</h2>
 
-<div class="language-shell highlighter-rouge"><pre class="highlight"><code><span class="gp">$ </span><span class="nb">cd</span> <span class="nv">$mpfr</span>
+<div class="language-bash highlighter-rouge"><pre class="highlight line-numbers "><code><span class="gp">$ </span><span class="nb">cd</span> <span class="nv">$mpfr</span>
 <span class="gp">$ </span>autoreconf -i
 
 <span class="gp">$ </span>./configure                <span class="se">\</span>
@@ -168,7 +168,7 @@ $ PKGVERSION="arm toolchain for rpi"
 </div>
 
 <h2 id="安装mpc">安装mpc</h2>
-<div class="language-shell highlighter-rouge"><pre class="highlight"><code><span class="gp">$ </span><span class="nb">cd</span> <span class="nv">$mpc</span>
+<div class="language-bash highlighter-rouge"><pre class="highlight line-numbers "><code><span class="gp">$ </span><span class="nb">cd</span> <span class="nv">$mpc</span>
 <span class="gp">$ </span>autoreconf -i
 
 <span class="gp">$ </span>./configure                 <span class="se">\</span>
@@ -184,7 +184,7 @@ $ PKGVERSION="arm toolchain for rpi"
 </div>
 
 <h2 id="安装-isl">安装 isl</h2>
-<div class="language-shell highlighter-rouge"><pre class="highlight"><code><span class="gp">$ </span><span class="nb">cd</span> <span class="nv">$isl</span>
+<div class="language-bash highlighter-rouge"><pre class="highlight line-numbers "><code><span class="gp">$ </span><span class="nb">cd</span> <span class="nv">$isl</span>
 <span class="gp">$ </span>./configure                      <span class="se">\</span>
    --prefix<span class="o">=</span><span class="nv">$TARGET_DIR</span>          <span class="se">\</span>
    --with-gmp-prefix<span class="o">=</span><span class="nv">$TARGET_DIR</span> <span class="se">\</span>
@@ -197,7 +197,7 @@ $ PKGVERSION="arm toolchain for rpi"
 
 <h2 id="安装-cloog">安装 cloog</h2>
 
-<div class="language-shell highlighter-rouge"><pre class="highlight"><code><span class="gp">$ </span><span class="nb">cd</span> <span class="nv">$cloog</span>
+<div class="language-bash highlighter-rouge"><pre class="highlight line-numbers "><code><span class="gp">$ </span><span class="nb">cd</span> <span class="nv">$cloog</span>
 <span class="gp">$ </span>mkdir build
 <span class="gp">$ </span><span class="nb">cd </span>build
 <span class="gp">$ </span>../configure                           <span class="se">\</span>
@@ -214,7 +214,7 @@ $ PKGVERSION="arm toolchain for rpi"
 
 <h2 id="安装-binutils">安装 binutils</h2>
 
-<div class="language-shell highlighter-rouge"><pre class="highlight"><code><span class="gp">$ </span><span class="nb">cd</span> <span class="nv">$binutils</span>
+<div class="language-bash highlighter-rouge"><pre class="highlight line-numbers "><code><span class="gp">$ </span><span class="nb">cd</span> <span class="nv">$binutils</span>
 <span class="gp">$ </span>mkdir build
 <span class="gp">$ </span><span class="nb">cd </span>build
 <span class="gp">$ </span><span class="nv">LDFLAGS</span><span class="o">=</span><span class="s2">"-Wl,-rpath -Wl,</span><span class="nv">$TARGET_DIR</span><span class="s2">/lib"</span> <span class="se">\</span>
@@ -247,7 +247,7 @@ $ PKGVERSION="arm toolchain for rpi"
 编译 gcc 的 C++编译器需要 eglibc（libstdc++ 依赖 eglibc）。所以只能先编译生成
 C语言编译器，再编译 eglibc，最后编译 C++编译器。</p>
 
-<div class="language-shell highlighter-rouge"><pre class="highlight"><code><span class="gp">$ </span><span class="nb">cd</span> <span class="nv">$gcc</span>
+<div class="language-bash highlighter-rouge"><pre class="highlight line-numbers "><code><span class="gp">$ </span><span class="nb">cd</span> <span class="nv">$gcc</span>
 <span class="gp">$ </span>mkdir build_mini
 <span class="gp">$ </span><span class="nb">cd </span>build_mini
 
@@ -295,7 +295,7 @@ C语言编译器，再编译 eglibc，最后编译 C++编译器。</p>
 <p>glibc 不仅实现 ISO C 规定的那些标准函数，还实现了 POSIX，Berkeley Unix，
 SVID 和 XPG标准。Linux 的系统调用也是通过 glibc 封装的。eglibc 和 glibc 是二进制兼容的。</p>
 
-<div class="language-shell highlighter-rouge"><pre class="highlight"><code><span class="gp">$ </span><span class="nb">cd</span> <span class="nv">$eglibc</span>
+<div class="language-bash highlighter-rouge"><pre class="highlight line-numbers "><code><span class="gp">$ </span><span class="nb">cd</span> <span class="nv">$eglibc</span>
 <span class="gp">$ </span>mkdir build
 <span class="gp">$ </span><span class="nb">cd </span>build
 <span class="gp">$ </span><span class="nv">BUILD_CC</span><span class="o">=</span>gcc <span class="nv">CC</span><span class="o">=</span><span class="nv">$TARGET_ALIAS</span>-gcc <span class="nv">CXX</span><span class="o">=</span><span class="nv">$TARGET_ALIAS</span>-cpp <span class="se">\</span>
@@ -319,7 +319,7 @@ SVID 和 XPG标准。Linux 的系统调用也是通过 glibc 封装的。eglibc 
 
 <h2 id="安装-libelf">安装 libelf</h2>
 
-<div class="language-shell highlighter-rouge"><pre class="highlight"><code><span class="gp">$ </span><span class="nb">cd</span> <span class="nv">$eglibc</span>
+<div class="language-bash highlighter-rouge"><pre class="highlight line-numbers "><code><span class="gp">$ </span><span class="nb">cd</span> <span class="nv">$eglibc</span>
 <span class="gp">$ </span>mkdir build
 <span class="gp">$ </span><span class="nb">cd </span>build
 <span class="gp">$ </span>../configure  --prefix<span class="o">=</span><span class="nv">$TARGET_DIR</span> --disable-shared --enable-static
@@ -329,7 +329,7 @@ SVID 和 XPG标准。Linux 的系统调用也是通过 glibc 封装的。eglibc 
 
 <h2 id="安装-gcc-full">安装 gcc full</h2>
 
-<div class="language-shell highlighter-rouge"><pre class="highlight"><code><span class="gp">$ </span><span class="nb">cd</span> <span class="nv">$gcc</span>
+<div class="language-bash highlighter-rouge"><pre class="highlight line-numbers "><code><span class="gp">$ </span><span class="nb">cd</span> <span class="nv">$gcc</span>
 <span class="gp">$ </span>mkdir build
 <span class="gp">$ </span><span class="nb">cd </span>build
 <span class="gp">$ </span>../configure                         <span class="se">\</span>
@@ -376,7 +376,7 @@ SVID 和 XPG标准。Linux 的系统调用也是通过 glibc 封装的。eglibc 
 armv6zk，但是 Clang 并不认识这个架构名称，它只能识别 armv6,所以这个值影响最终编译生成
 的 clang 编译器的 <strong>–target</strong> 选项。如果指定的是 armv6zk，最终生成的编译器的 <strong>target</strong>
  值将是 <strong>arm7tdmi</strong>。这个值可以从 Clang 的 lib/Driver/ToolChains.cpp 的 GetArmArchForMCpu 函数中得知：</p>
-<div class="language-cpp highlighter-rouge"><pre class="highlight"><code><span class="k">static</span> <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="nf">GetArmArchForMCpu</span><span class="p">(</span><span class="n">StringRef</span> <span class="n">Value</span><span class="p">)</span> <span class="p">{</span>
+<div class="language-cpp highlighter-rouge"><pre class="highlight line-numbers "><code><span class="k">static</span> <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="nf">GetArmArchForMCpu</span><span class="p">(</span><span class="n">StringRef</span> <span class="n">Value</span><span class="p">)</span> <span class="p">{</span>
   <span class="k">return</span> <span class="n">llvm</span><span class="o">::</span><span class="n">StringSwitch</span><span class="o">&lt;</span><span class="k">const</span> <span class="kt">char</span> <span class="o">*&gt;</span><span class="p">(</span><span class="n">Value</span><span class="p">)</span>
     <span class="p">.</span><span class="n">Cases</span><span class="p">(</span><span class="s">"arm9e"</span><span class="p">,</span> <span class="s">"arm946e-s"</span><span class="p">,</span> <span class="s">"arm966e-s"</span><span class="p">,</span> <span class="s">"arm968e-s"</span><span class="p">,</span> <span class="s">"arm926ej-s"</span><span class="p">,</span><span class="s">"armv5"</span><span class="p">)</span>
     <span class="p">.</span><span class="n">Cases</span><span class="p">(</span><span class="s">"arm10e"</span><span class="p">,</span> <span class="s">"arm10tdmi"</span><span class="p">,</span> <span class="s">"armv5"</span><span class="p">)</span>
@@ -396,7 +396,7 @@ armv6zk，但是 Clang 并不认识这个架构名称，它只能识别 armv6,�
 
 <p>执行编译：</p>
 
-<div class="language-shell highlighter-rouge"><pre class="highlight"><code><span class="gp">$ </span><span class="nb">cd</span> <span class="nv">$clang</span>
+<div class="language-bash highlighter-rouge"><pre class="highlight line-numbers "><code><span class="gp">$ </span><span class="nb">cd</span> <span class="nv">$clang</span>
 <span class="gp">$ </span>mkdir build
 <span class="gp">$ </span><span class="nb">cd </span>build
 <span class="gp">$ </span>../configure                                  <span class="se">\</span>
@@ -445,7 +445,7 @@ armv6zk，但是 Clang 并不认识这个架构名称，它只能识别 armv6,�
 <section class="author-detail">
     <section class="post-footer-item author-card">
         <div class="avatar">
-            <img src="/assets/img/profile.jpg" alt="">
+            <img src="//assets/img/profile.jpg" alt="">
         </div>
         <div class="author-name" rel="author">黄成林</div>
         <div class="bio">
@@ -474,7 +474,7 @@ armv6zk，但是 Clang 并不认识这个架构名称，它只能识别 armv6,�
             
         </div>
         
-         
+        
         <div class="read-next-item">
             <a href="/linux/opensuse/2013/09/17/bumblebee-in-opensuse-12-dot-3.html" class="read-next-link"></a>
             <section>

@@ -66,13 +66,13 @@
 不能直接附加到 Valgrind 的进程中，那就变成调试 Valgrind 了。Valgrind 提供了 GDB
 远程调试机制，可以连接到 Valgrind 实现的 gdbserver 中。步骤如下：</p>
 
-<div class="language-shell highlighter-rouge"><pre class="highlight"><code><span class="gp">$ </span>valgrind --tool<span class="o">=</span>memcheck --vgdb<span class="o">=</span>yes --vgdb-error<span class="o">=</span>0 ./heapC
+<div class="language-bash highlighter-rouge"><pre class="highlight line-numbers "><code><span class="gp">$ </span>valgrind --tool<span class="o">=</span>memcheck --vgdb<span class="o">=</span>yes --vgdb-error<span class="o">=</span>0 ./heapC
 </code></pre>
 </div>
 
 <p><code class="highlighter-rouge">--vgdb</code> 和 <code class="highlighter-rouge">--vgdb--error</code> 可以参考前面的文章<a href="http://xinsuiyuer.github.io/blog/2013/10/25/use-valgrind-memcheck-to-detect-memory-error-1/">valgrind Memcheck 检测内存错误 - 使用</a>。启动之后 Valgrind 会等待 gdb 连接上来。</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>==14669== Memcheck, a memory error detector
+<div class="highlighter-rouge"><pre class="highlight line-numbers "><code>==14669== Memcheck, a memory error detector
 ==14669== Copyright (C) 2002-2012, and GNU GPL'd, by Julian Seward et al.
 ==14669== Using Valgrind-3.8.1 and LibVEX; rerun with -h for copyright info
 ==14669== Command: ./heapC
@@ -89,14 +89,14 @@
 </div>
 
 <p>GDB 通过 vgdb 连接到 Valgrind。</p>
-<div class="language-shell highlighter-rouge"><pre class="highlight"><code><span class="gp">$ </span>gdb ./heapC
+<div class="language-bash highlighter-rouge"><pre class="highlight line-numbers "><code><span class="gp">$ </span>gdb ./heapC
 <span class="o">(</span>gdb<span class="o">)</span> target remote | vgdb
 </code></pre>
 </div>
 
 <p>如果有多个被调试程序同时运行，在执行 target remote | vgdb 时会提示连接到哪个
 进程中：</p>
-<div class="highlighter-rouge"><pre class="highlight"><code>(gdb) target remote | vgdb
+<div class="highlighter-rouge"><pre class="highlight line-numbers "><code>(gdb) target remote | vgdb
 Remote debugging using | vgdb
 no --pid= arg given and multiple valgrind pids found:
 use --pid=16988 for valgrind --vgdb=yes --vgdb-error=0 ./heapC
@@ -106,7 +106,7 @@ Remote communication error.  Target disconnected.: Connection reset by peer.
 </div>
 
 <p>可以通过给 vgdb 提供 pid 选项指定连接到哪个进程：</p>
-<div class="language-shell highlighter-rouge"><pre class="highlight"><code><span class="o">(</span>gdb<span class="o">)</span> target remote | vgdb --pid<span class="o">=</span>17013
+<div class="language-bash highlighter-rouge"><pre class="highlight line-numbers "><code><span class="o">(</span>gdb<span class="o">)</span> target remote | vgdb --pid<span class="o">=</span>17013
 </code></pre>
 </div>
 
@@ -130,7 +130,7 @@ Remote communication error.  Target disconnected.: Connection reset by peer.
 <section class="author-detail">
     <section class="post-footer-item author-card">
         <div class="avatar">
-            <img src="/assets/img/profile.jpg" alt="">
+            <img src="//assets/img/profile.jpg" alt="">
         </div>
         <div class="author-name" rel="author">黄成林</div>
         <div class="bio">
@@ -159,7 +159,7 @@ Remote communication error.  Target disconnected.: Connection reset by peer.
             
         </div>
         
-         
+        
         <div class="read-next-item">
             <a href="/%E7%BC%96%E7%A8%8B/c/c++/2013/10/25/use-valgrind-memcheck-to-detect-memory-error-1.html" class="read-next-link"></a>
             <section>

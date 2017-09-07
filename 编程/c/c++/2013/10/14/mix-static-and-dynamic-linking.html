@@ -68,7 +68,7 @@
 这时候能体现出混合使用动静态库的优势。ld 链接程序提供了
 两个选项用于指定所引用的库是静态的还是动态的。</p>
 
-<div class="language-shell highlighter-rouge"><pre class="highlight"><code><span class="gp">$ </span>ld --help
+<div class="language-bash highlighter-rouge"><pre class="highlight line-numbers "><code><span class="gp">$ </span>ld --help
   ...
   -Bdynamic, -dy, -call_shared
                               Link against shared libraries
@@ -81,7 +81,7 @@
 <p>例如：如果想在链接的时候使用  duma 的静态库，其他的库则默认使用动态库。
 则可以这样编译：</p>
 
-<div class="language-shell highlighter-rouge"><pre class="highlight"><code><span class="gp">$ </span>g++ -g -O0 heap-corruption.cc -o heapC -Wl,-Bstatic,-lduma -Wl,-Bdynamic -pthread
+<div class="language-bash highlighter-rouge"><pre class="highlight line-numbers "><code><span class="gp">$ </span>g++ -g -O0 heap-corruption.cc -o heapC -Wl,-Bstatic,-lduma -Wl,-Bdynamic -pthread
 </code></pre>
 </div>
 
@@ -102,7 +102,7 @@
 <section class="author-detail">
     <section class="post-footer-item author-card">
         <div class="avatar">
-            <img src="/assets/img/profile.jpg" alt="">
+            <img src="//assets/img/profile.jpg" alt="">
         </div>
         <div class="author-name" rel="author">黄成林</div>
         <div class="bio">
@@ -131,7 +131,7 @@
             
         </div>
         
-         
+        
         <div class="read-next-item">
             <a href="/linux/2013/10/13/posix-getconf.html" class="read-next-link"></a>
             <section>

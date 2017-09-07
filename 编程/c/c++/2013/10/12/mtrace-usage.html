@@ -67,7 +67,7 @@ calloc() 和 free() ，对分配和释放内存的操作进行配对检测，如
 会记录导致内存泄漏的分配函数调用所在的位置，并将记录保存到环境变量 MALLOC_TRACE
 指定的文件中，然后就可以使用 mtrace 命令来查看日志了。</p>
 
-<div class="language-shell highlighter-rouge"><pre class="highlight"><code><span class="gp">$ </span>mtrace path/to/your/app path/to/your/log-file
+<div class="language-bash highlighter-rouge"><pre class="highlight line-numbers "><code><span class="gp">$ </span>mtrace path/to/your/app path/to/your/log-file
 </code></pre>
 </div>
 
@@ -84,14 +84,14 @@ calloc() 和 free() ，对分配和释放内存的操作进行配对检测，如
 的编译选项。</li>
 </ol>
 
-<div class="language-shell highlighter-rouge"><pre class="highlight"><code><span class="gp">$ </span><span class="nv">MALLOC_TRACE</span><span class="o">=</span>path/to/your/log-file  path/to/your/app
+<div class="language-bash highlighter-rouge"><pre class="highlight line-numbers "><code><span class="gp">$ </span><span class="nv">MALLOC_TRACE</span><span class="o">=</span>path/to/your/log-file  path/to/your/app
 </code></pre>
 </div>
 
 <p>启用 <strong>mtrace(void)</strong> 会影响程序的性能，所以这种方法只是用来调试程序，正式发布时
 必须要移除这些代码。</p>
 
-<div class="language-c++ highlighter-rouge"><pre class="highlight"><code><span class="cp">#include &lt;stdlib.h&gt;
+<div class="language-cpp highlighter-rouge"><pre class="highlight line-numbers "><code><span class="cp">#include &lt;stdlib.h&gt;
 #include &lt;mcheck.h&gt;
 </span>
 <span class="cp">#include &lt;iostream&gt;
@@ -138,7 +138,7 @@ calloc() 和 free() ，对分配和释放内存的操作进行配对检测，如
 </code></pre>
 </div>
 
-<div class="language-shell highlighter-rouge"><pre class="highlight"><code><span class="gp">$ </span>g++ -std<span class="o">=</span>c++11 -g -O0 -o app main.cc
+<div class="language-bash highlighter-rouge"><pre class="highlight line-numbers "><code><span class="gp">$ </span>g++ -std<span class="o">=</span>c++11 -g -O0 -o app main.cc
 <span class="gp">$ </span><span class="nv">MALLOC_TRACE</span><span class="o">=</span><span class="nb">test</span>-mtrace.dat ./app
 </code></pre>
 </div>
@@ -147,7 +147,7 @@ calloc() 和 free() ，对分配和释放内存的操作进行配对检测，如
 
 <h2 id="分析日志文件">分析日志文件</h2>
 
-<div class="language-shell highlighter-rouge"><pre class="highlight"><code><span class="gp">$ </span>mtrace ./app <span class="nb">test</span>-mtrace.dat
+<div class="language-bash highlighter-rouge"><pre class="highlight line-numbers "><code><span class="gp">$ </span>mtrace ./app <span class="nb">test</span>-mtrace.dat
 
 Memory not freed:
 -----------------
@@ -188,7 +188,7 @@ malloc这类函数，而是通过 <strong>new</strong> 操作符简介调用的,
 <section class="author-detail">
     <section class="post-footer-item author-card">
         <div class="avatar">
-            <img src="/assets/img/profile.jpg" alt="">
+            <img src="//assets/img/profile.jpg" alt="">
         </div>
         <div class="author-name" rel="author">黄成林</div>
         <div class="bio">
@@ -217,7 +217,7 @@ malloc这类函数，而是通过 <strong>new</strong> 操作符简介调用的,
             
         </div>
         
-         
+        
         <div class="read-next-item">
             <a href="/%E7%BC%96%E7%A8%8B/2013/10/09/use-memusage-to-collect-memory-usage-info.html" class="read-next-link"></a>
             <section>

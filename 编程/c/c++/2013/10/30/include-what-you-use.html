@@ -76,18 +76,18 @@
 
 <h2 id="安装">安装</h2>
 <p>安装前必须安装对应版本的 clang 的开发包。</p>
-<div class="language-shell highlighter-rouge"><pre class="highlight"><code><span class="gp">$ </span>zypper install llvm llvm-devel llvm-clang llvm-clang-devel
+<div class="language-bash highlighter-rouge"><pre class="highlight line-numbers "><code><span class="gp">$ </span>zypper install llvm llvm-devel llvm-clang llvm-clang-devel
 </code></pre>
 </div>
 
 <p>下载源码，可以下载打包好的 tar <a href="https://docs.google.com/file/d/0ByBfuBCQcURXQktsT3ZjVmZtWkU/edit">include-what-you-use-3.3.tar.gz</a>
 或者从 svn 迁出</p>
-<div class="language-shell highlighter-rouge"><pre class="highlight"><code><span class="gp">$ </span>svn co http://include-what-you-use.googlecode.com/svn/trunk/ include-what-you-use
+<div class="language-bash highlighter-rouge"><pre class="highlight line-numbers "><code><span class="gp">$ </span>svn co http://include-what-you-use.googlecode.com/svn/trunk/ include-what-you-use
 </code></pre>
 </div>
 
 <p>可以单独的编译，也可以作为 LLVM 的一部分。单独编译比较方便。</p>
-<div class="language-shell highlighter-rouge"><pre class="highlight"><code><span class="gp">$ </span>mkdir build
+<div class="language-bash highlighter-rouge"><pre class="highlight line-numbers "><code><span class="gp">$ </span>mkdir build
 <span class="gp">$ </span><span class="nb">cd </span>include-what-you-use/build
 <span class="gp">$ </span>cmake -G <span class="s2">"Unix Makefiles"</span> -DLLVM_PATH<span class="o">=</span>/usr../include-what-you-use
 <span class="gp">$ </span>make
@@ -96,12 +96,12 @@
 
 <h2 id="使用">使用</h2>
 <p>IWYU 使用很简单，如果有 Makefile，直接</p>
-<div class="language-shell highlighter-rouge"><pre class="highlight"><code><span class="gp">$ </span>make -B -k <span class="nv">CXX</span><span class="o">=</span>include-what-you-use
+<div class="language-bash highlighter-rouge"><pre class="highlight line-numbers "><code><span class="gp">$ </span>make -B -k <span class="nv">CXX</span><span class="o">=</span>include-what-you-use
 </code></pre>
 </div>
 
 <p>例子：</p>
-<div class="language-c++ highlighter-rouge"><pre class="highlight"><code><span class="cp">#include &lt;stdio.h&gt;
+<div class="language-cpp highlighter-rouge"><pre class="highlight line-numbers "><code><span class="cp">#include &lt;stdio.h&gt;
 #include &lt;malloc.h&gt;
 #include &lt;limits.h&gt;
 </span>
@@ -112,7 +112,7 @@
 </code></pre>
 </div>
 
-<div class="language-shell highlighter-rouge"><pre class="highlight"><code><span class="gp">$ </span>include-what-you-use bar.cc
+<div class="language-bash highlighter-rouge"><pre class="highlight line-numbers "><code><span class="gp">$ </span>include-what-you-use bar.cc
 
 bar.cc should add these lines:
 
@@ -129,7 +129,7 @@ The full include-list <span class="k">for </span>bar.cc
 <p>有时候相同的符号在很多文件中都是定义，可以使用 map 的方法指定引用哪个文件。map 文件
 的方法可以参考文档 <a href="https://code.google.com/p/include-what-you-use/wiki/IWYUMappings">IWYUMappings</a>。
 然后在运行 IWYU 时指定 map 文件：</p>
-<div class="language-shell highlighter-rouge"><pre class="highlight"><code><span class="gp">$ </span>make -B -k <span class="nv">CXX</span><span class="o">=</span>include-what-you-use <span class="nv">CFLAGS</span><span class="o">=</span><span class="s2">" -Xiwyu --mapping_file=mapfile"</span>
+<div class="language-bash highlighter-rouge"><pre class="highlight line-numbers "><code><span class="gp">$ </span>make -B -k <span class="nv">CXX</span><span class="o">=</span>include-what-you-use <span class="nv">CFLAGS</span><span class="o">=</span><span class="s2">" -Xiwyu --mapping_file=mapfile"</span>
 </code></pre>
 </div>
 
@@ -138,7 +138,7 @@ The full include-list <span class="k">for </span>bar.cc
 
 <p>可以将 IWYU 保存到文件中，之后使用其附带的 fix_includes.py 自动对代码进行修复。
 但应该慎重….</p>
-<div class="language-shell highlighter-rouge"><pre class="highlight"><code><span class="gp">$ </span>make -B -k <span class="nv">CXX</span><span class="o">=</span>include-what-you-use &gt; iwyu.out
+<div class="language-bash highlighter-rouge"><pre class="highlight line-numbers "><code><span class="gp">$ </span>make -B -k <span class="nv">CXX</span><span class="o">=</span>include-what-you-use &gt; iwyu.out
 <span class="gp">$ </span>fix_includes.py &lt; iwyu.out
 </code></pre>
 </div>
@@ -163,7 +163,7 @@ IWYU 当前还未支持 ‘forward-declared’，期待中！</p>
 <section class="author-detail">
     <section class="post-footer-item author-card">
         <div class="avatar">
-            <img src="/assets/img/profile.jpg" alt="">
+            <img src="//assets/img/profile.jpg" alt="">
         </div>
         <div class="author-name" rel="author">黄成林</div>
         <div class="bio">
@@ -192,7 +192,7 @@ IWYU 当前还未支持 ‘forward-declared’，期待中！</p>
             
         </div>
         
-         
+        
         <div class="read-next-item">
             <a href="/%E7%BC%96%E7%A8%8B/c/c++/2013/10/26/valgrind-with-gdb.html" class="read-next-link"></a>
             <section>
