@@ -1,6 +1,12 @@
 [
   
     {
+      "title"    : "Ubuntu 16.0创建启动图标",
+      "tags"     : "ubuntu",
+      "url"      : "/%E6%9D%82%E8%AE%B0/2017/09/12/ubuntu16.04-create-desktop-lanucher.html"
+    } ,
+  
+    {
       "title"    : "Atom + Github Pages markdown 插件安装",
       "tags"     : "markdown",
       "url"      : "/markdown/2017/09/06/atom-markdown-plugins.html"
