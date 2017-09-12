@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ubuntu 16.0创建启动图标 - xsyr的独立博客</title>
+    <meta name="author"  content="黄成林">
+    <meta name="description" content="Ubuntu 16.0创建启动图标">
+    <meta name="keywords"  content="ubuntu">
+    <!-- Open Graph -->
+    <meta property="og:title" content="Ubuntu 16.0创建启动图标 - xsyr的独立博客">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://xsyr.github.io/%E6%9D%82%E8%AE%B0/2017/09/12/ubuntu16.04-create-desktop-lanucher.html">
+    <meta property="og:description" content="经验源于爱折腾, 喜欢折腾各种新鲜玩意儿。">
+    <meta property="og:site_name" content="xsyr的独立博客">
+    <link rel="shortcut icon" href="/assets/img/favicon.ico">
+    <link rel="stylesheet" href="//cdn.staticfile.org/normalize/6.0.0/normalize.min.css">
+    <link rel="stylesheet" href="//at.alicdn.com/t/font_roc50gemkxpw4s4i.css">
+    <link rel="stylesheet" href="/assets/css/github-markdown.css">
+    <link rel="stylesheet" href="/assets/css/prism.css">
+    <link rel="stylesheet" href="/assets/css/share.min.css">
+    <link rel="stylesheet" href="/assets/css/app.min.css">
+</head>
+<body>
+    <!--[if lt IE 10]>
+<div class="alert-danger" role="alert">你的浏览器实在太太太旧了，放学别走，升级完浏览器再说！<a target="_blank" class="alert-link" href="http://browsehappy.com">立即升级</a></div>
+<![endif]-->
+<input id="nm-switch" type="hidden" value="false">
+
+<header class="g-header">
+    <div class="g-logo">
+        <a href="/"></a>
+    </div>
+    <i id="menu-toggle" class="iconfont icon-menu"></i>
+    <nav class="g-nav">
+        <ul>
+            
+            <li><a href="/">home</a></li>
+            
+            <li><a href="/tags.html">tags</a></li>
+            
+        </ul>
+    </nav>
+</header>
+
+
+<header class="g-banner post-header post-pattern-circuitBoard bgcolor-default post-no-cover" data-theme="default">
+    <div class="post-wrapper">
+        <div class="post-tags">
+            
+            
+            <a href="/tags#ubuntu" class="post-tag">ubuntu</a>
+            
+            
+        </div>
+        <h1>Ubuntu 16.0创建启动图标</h1>
+        <div class="post-meta">
+            <span class="post-meta-item"><i class="iconfont icon-author"></i><a href="https://xsyr.github.io" target="_blank" rel="author">黄成林</a></></span>
+            <time class="post-meta-item" datetime="17-09-12"><i class="iconfont icon-date"></i>12 Sep 2017</time>
+        </div>
+    </div>
+    
+</header>
+
+<div class="post-content">
+    
+    <h2 class="post-subtitle"></h2>
+    
+    <article class="markdown-body">
+        <h1 id="1-安装-gnome-panel">1. 安装 gnome-panel</h1>
+<div class="language-bash highlighter-rouge"><pre class="highlight line-numbers "><code><span class="gp">$ </span>sudo apt install gnome-panel
+</code></pre>
+</div>
+
+<h1 id="2-创建启动图标">2. 创建启动图标</h1>
+<div class="language-bash highlighter-rouge"><pre class="highlight line-numbers "><code><span class="gp">$ </span>gnome-desktop-item-edit --create-new ~/Desktop
+</code></pre>
+</div>
+
+<p><img src="/assets/img/ubuntu-new-desktop-launcher.png" alt="ubuntu-new-desktop-launcher" /></p>
+
+<p>填写名称（启动器的名称），命令，点击ok可以创建启动图标。</p>
+
+<h1 id="3-编辑启动图标在桌面的名称">3. 编辑启动图标在桌面的名称</h1>
+
+<p><img src="/assets/img/ubuntu-new-desktop-launcher-name.png" alt="ubuntu-new-desktop-launcher-name" /></p>
+
+<p>编辑名称和描述。</p>
+
+<h1 id="4-复制到-usrshareapplications使其可在-dashwin键启动">4. 复制到 /usr/share/applications，使其可在 Dash(Win键)启动</h1>
+<div class="language-bash highlighter-rouge"><pre class="highlight line-numbers "><code><span class="gp">$ </span>cp xxx.desktop /usr/share/applications
+</code></pre>
+</div>
+
+    </article>
+    
+    <div class="social-share-wrapper">
+        <div class="social-share"></div>
+    </div>
+    
+</div>
+
+<section class="author-detail">
+    <section class="post-footer-item author-card">
+        <div class="avatar">
+            <img src="/assets/img/profile.jpg" alt="">
+        </div>
+        <div class="author-name" rel="author">黄成林</div>
+        <div class="bio">
+            <p>后端开发者，热爱技术，简单爱折腾</p>
+        </div>
+        
+        <ul class="sns-links">
+            
+            <li>
+                <a href="//github.com/xsyr" target="_blank">
+                    <i class="iconfont icon-github"></i>
+                </a>
+            </li>
+            
+        </ul>
+        
+    </section>
+    <section class="post-footer-item read-next">
+        
+        
+        <div class="read-next-item">
+            <a href="/markdown/2017/09/06/atom-markdown-plugins.html" class="read-next-link"></a>
+            <section>
+                <span>Atom + Github Pages markdown 插件安装</span>
+                <p>在 VIM 里写 markdown 真的不太方便，特别是要贴图的时。Atom 的几个插件可以帮助我们快捷的写mar...</p>
+            </section>
+            
+            <div class="filter"></div>
+            <img src="/assets/img/atom-markdown-editor-effect.png" alt="">
+            
+        </div>
+        
+    </section>
+    
+</section>
+
+<footer class="g-footer">
+    <section>xsyr的独立博客 © 2017</section>
+    <section>Powered by <a href="//jekyllrb.com">Jekyll</a> | <a href="https://github.com/kaeyleo/jekyll-theme-H2O">Theme H2O</a></section>
+</footer>
+
+<script src="/assets/js/social-share.min.js"></script>
+<script>
+    socialShare('.social-share', {
+        sites: ['wechat','weibo','douban','twitter'],
+        wechatQrcodeTitle: "分享到微信朋友圈",
+        wechatQrcodeHelper: '<p>扫码后点击右上角</p><p>将本文分享至朋友圈</p>'
+    });
+</script>
+<script>
+/**
+*  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+*  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
+/*
+var disqus_config = function () {
+this.page.url = PAGE_URL;  // Replace PAGE_URL with your page's canonical URL variable
+this.page.identifier = PAGE_IDENTIFIER; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+};
+*/
+(function() { // DON'T EDIT BELOW THIS LINE
+var d = document, s = d.createElement('script');
+/*写入自己的disqus信息*/
+s.src = '#';
+s.setAttribute('data-timestamp', +new Date());
+(d.head || d.body).appendChild(s);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
+<script src="/assets/js/prism.js"></script>
+<script src="/assets/js/index.min.js"></script>
+</body>
+</html>
