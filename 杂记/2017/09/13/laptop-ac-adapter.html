@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ubuntu 16.0创建启动图标 - xsyr的独立博客</title>
+    <title>杂牌笔记本电源适配器 - xsyr的独立博客</title>
     <meta name="author"  content="黄成林">
-    <meta name="description" content="Ubuntu 16.0创建启动图标">
-    <meta name="keywords"  content="ubuntu">
+    <meta name="description" content="杂牌笔记本电源适配器">
+    <meta name="keywords"  content="">
     <!-- Open Graph -->
-    <meta property="og:title" content="Ubuntu 16.0创建启动图标 - xsyr的独立博客">
+    <meta property="og:title" content="杂牌笔记本电源适配器 - xsyr的独立博客">
     <meta property="og:type" content="website">
-    <meta property="og:url" content="https://xsyr.github.io/%E6%9D%82%E8%AE%B0/2017/09/12/ubuntu16.04-create-desktop-lanucher.html">
+    <meta property="og:url" content="https://xsyr.github.io/%E6%9D%82%E8%AE%B0/2017/09/13/laptop-ac-adapter.html">
     <meta property="og:description" content="经验源于爱折腾, 喜欢折腾各种新鲜玩意儿。">
     <meta property="og:site_name" content="xsyr的独立博客">
     <link rel="shortcut icon" href="/assets/img/favicon.ico">
@@ -48,20 +48,16 @@
     <div class="post-wrapper">
         <div class="post-tags">
             
-            
-            <a href="/tags#ubuntu" class="post-tag">ubuntu</a>
-            
-            
         </div>
-        <h1>Ubuntu 16.0创建启动图标</h1>
+        <h1>杂牌笔记本电源适配器</h1>
         <div class="post-meta">
             <span class="post-meta-item"><i class="iconfont icon-author"></i><a href="https://xsyr.github.io" target="_blank" rel="author">黄成林</a></></span>
-            <time class="post-meta-item" datetime="17-09-12"><i class="iconfont icon-date"></i>12 Sep 2017</time>
+            <time class="post-meta-item" datetime="17-09-13"><i class="iconfont icon-date"></i>13 Sep 2017</time>
         </div>
     </div>
     
     <div class="filter"></div>
-    <div class="post-cover" style="background: url('/assets/img/ubuntu-new-desktop-launcher.png') center no-repeat; background-size: cover;">
+    <div class="post-cover" style="background: url('/assets/img/laptop-ac-adapter.png') center no-repeat; background-size: cover;">
     
 </header>
 
@@ -70,30 +66,16 @@
     <h2 class="post-subtitle"></h2>
     
     <article class="markdown-body">
-        <h1 id="1-安装-gnome-panel">1. 安装 gnome-panel</h1>
-<div class="language-bash highlighter-rouge"><pre class="highlight line-numbers "><code><span class="gp">$ </span>sudo apt install gnome-panel
-</code></pre>
-</div>
+        <p>最近在某宝上买了一个笔记本的电源适配器，这样可以一个放家里，一个放公司，省得上班背来背去。虽然买家总是
+会标着“原装正品”，但肯定就是杂牌了。用示波器观察了某宝电源和原装电源的空载电压波纹，如下图：</p>
 
-<h1 id="2-创建启动图标">2. 创建启动图标</h1>
-<div class="language-bash highlighter-rouge"><pre class="highlight line-numbers "><code><span class="gp">$ </span>gnome-desktop-item-edit --create-new ~/Desktop
-</code></pre>
-</div>
+<p><img src="/assets/img/laptop-ac-adapter.png" alt="laptop-ac-adapter" /></p>
 
-<p><img src="/assets/img/ubuntu-new-desktop-launcher.png" alt="ubuntu-new-desktop-launcher" /></p>
-
-<p>填写名称（启动器的名称），命令，点击ok可以创建启动图标。</p>
-
-<h1 id="3-编辑启动图标在桌面的名称">3. 编辑启动图标在桌面的名称</h1>
-
-<p><img src="/assets/img/ubuntu-new-desktop-launcher-name.png" alt="ubuntu-new-desktop-launcher-name" /></p>
-
-<p>编辑名称和描述。</p>
-
-<h1 id="4-复制到-usrshareapplications使其可在-dashwin键启动">4. 复制到 /usr/share/applications，使其可在 Dash(Win键)启动</h1>
-<div class="language-bash highlighter-rouge"><pre class="highlight line-numbers "><code><span class="gp">$ </span>cp xxx.desktop /usr/share/applications
-</code></pre>
-</div>
+<p>黄色的时杂牌的电压波形，绿色的是原装的。可以看到原配的电压为 20.34V，接近标称 20V电压。
+而杂牌电压21.19V，与20V高了1.19V。
+在波纹方面，原装适配器波纹小，杂牌适配器的每15ms出现一个波动，肯定跟AC-DC设计有关了，可能是滤波电容不够大吧。
+而且原配适配器的Vp-p只有 0.8v左右，杂牌的达到了1.56v。
+so，便宜有便宜的道理，暂且用着。</p>
 
     </article>
     
@@ -126,28 +108,16 @@
     </section>
     <section class="post-footer-item read-next">
         
+        
         <div class="read-next-item">
-            <a href="/%E6%9D%82%E8%AE%B0/2017/09/13/laptop-ac-adapter.html" class="read-next-link"></a>
+            <a href="/%E6%9D%82%E8%AE%B0/2017/09/12/ubuntu16.04-create-desktop-lanucher.html" class="read-next-link"></a>
             <section>
-                <span>杂牌笔记本电源适配器</span>
-                <p>最近在某宝上买了一个笔记本的电源适配器，这样可以一个放家里，一个放公司，省得上班背来背去。虽然买家总是会标着“原装...</p>
+                <span>Ubuntu 16.0创建启动图标</span>
+                <p>1. 安装 gnome-panel$ sudo apt install gnome-panel</p>
             </section>
             
             <div class="filter"></div>
-            <img src="/assets/img/laptop-ac-adapter.png" alt="">
-            
-        </div>
-        
-        
-        <div class="read-next-item">
-            <a href="/markdown/2017/09/06/atom-markdown-plugins.html" class="read-next-link"></a>
-            <section>
-                <span>Atom + Github Pages markdown 插件安装</span>
-                <p>在 VIM 里写 markdown 真的不太方便，特别是要贴图的时。Atom 的几个插件可以帮助我们快捷的写mar...</p>
-            </section>
-            
-            <div class="filter"></div>
-            <img src="/assets/img/atom-markdown-editor-effect.png" alt="">
+            <img src="/assets/img/ubuntu-new-desktop-launcher.png" alt="">
             
         </div>
         
