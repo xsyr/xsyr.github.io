@@ -1,6 +1,12 @@
 [
   
     {
+      "title"    : "Arduino Pro Mini 免复位烧写",
+      "tags"     : "",
+      "url"      : "/arduino/iot/2017/09/14/arduino-pro-mini-automatic-upload-program.html"
+    } ,
+  
+    {
       "title"    : "杂牌笔记本电源适配器",
       "tags"     : "",
       "url"      : "/%E6%9D%82%E8%AE%B0/2017/09/13/laptop-ac-adapter.html"

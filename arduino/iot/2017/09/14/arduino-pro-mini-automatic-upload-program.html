@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>杂牌笔记本电源适配器 - xsyr的独立博客</title>
+    <title>Arduino Pro Mini 免复位烧写 - xsyr的独立博客</title>
     <meta name="author"  content="黄成林">
-    <meta name="description" content="杂牌笔记本电源适配器">
+    <meta name="description" content="Arduino Pro Mini 免复位烧写">
     <meta name="keywords"  content="">
     <!-- Open Graph -->
-    <meta property="og:title" content="杂牌笔记本电源适配器 - xsyr的独立博客">
+    <meta property="og:title" content="Arduino Pro Mini 免复位烧写 - xsyr的独立博客">
     <meta property="og:type" content="website">
-    <meta property="og:url" content="https://xsyr.github.io/%E6%9D%82%E8%AE%B0/2017/09/13/laptop-ac-adapter.html">
+    <meta property="og:url" content="https://xsyr.github.io/arduino/iot/2017/09/14/arduino-pro-mini-automatic-upload-program.html">
     <meta property="og:description" content="经验源于爱折腾, 喜欢折腾各种新鲜玩意儿。">
     <meta property="og:site_name" content="xsyr的独立博客">
     <link rel="shortcut icon" href="/assets/img/favicon.ico">
@@ -49,15 +49,15 @@
         <div class="post-tags">
             
         </div>
-        <h1>杂牌笔记本电源适配器</h1>
+        <h1>Arduino Pro Mini 免复位烧写</h1>
         <div class="post-meta">
             <span class="post-meta-item"><i class="iconfont icon-author"></i><a href="https://xsyr.github.io" target="_blank" rel="author">黄成林</a></></span>
-            <time class="post-meta-item" datetime="17-09-13"><i class="iconfont icon-date"></i>13 Sep 2017</time>
+            <time class="post-meta-item" datetime="17-09-14"><i class="iconfont icon-date"></i>14 Sep 2017</time>
         </div>
     </div>
     
     <div class="filter"></div>
-    <div class="post-cover" style="background: url('/assets/img/laptop-ac-adapter.png') center no-repeat; background-size: cover;">
+    <div class="post-cover" style="background: url('/assets/img/arduino-pro-mini.png') center no-repeat; background-size: cover;">
     
 </header>
 
@@ -66,16 +66,59 @@
     <h2 class="post-subtitle"></h2>
     
     <article class="markdown-body">
-        <p>最近在某宝上买了一个笔记本的电源适配器，这样可以一个放家里，一个放公司，省得上班背来背去。虽然买家总是
-会标着“原装正品”，但肯定就是杂牌了。用示波器观察了某宝电源和原装电源的空载电压波纹，如下图：</p>
+        <p>自从高中毕业起就放下了电子方面的兴趣，最近心血来潮又捣鼓起来，就买了一个 Arduino Pro Mini 版，
+某宝买的8元多，比当年的 89C51单片机便宜多了。Arduino Pro Mini 有好多个版本，我买的是这个版本的：</p>
 
-<p><img src="/assets/img/laptop-ac-adapter.png" alt="laptop-ac-adapter" /></p>
+<p><img src="/assets/img/arduino-pro-mini.png" alt="arduino-pro-mini" /></p>
 
-<p>黄色的时杂牌的电压波形，绿色的是原装的。可以看到原配的电压为 20.34V，接近标称 20V电压。
-而杂牌电压21.19V，与20V高了1.19V。
-在波纹方面，原装适配器波纹小，杂牌适配器的每15ms出现一个波动，肯定跟AC-DC设计有关了，可能是滤波电容不够大吧。
-而且原配适配器的Vp-p只有 0.8v左右，杂牌的达到了1.56v。
-so，便宜有便宜的道理，暂且用着。</p>
+<p>烧写程序使用 FT232RL 作为 USB转TTL，如下图
+<img src="/assets/img/ft232rl.png" alt="FT232RL" /></p>
+
+<p>刚拿到手按如下方式将 FT232RL 与 Arduino Pro Mini 连接</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>FT232RL引脚</th>
+      <th>Arduino Pro Mini引脚</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>VCC</td>
+      <td>VCC</td>
+    </tr>
+    <tr>
+      <td>GND</td>
+      <td>GND</td>
+    </tr>
+    <tr>
+      <td>RX</td>
+      <td>TX</td>
+    </tr>
+    <tr>
+      <td>TX</td>
+      <td>RT</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>用 Arduino IDE 自带的 Blink demo程序烧写，总是出现如下错误</p>
+<div class="highlighter-rouge"><pre class="highlight line-numbers "><code>avrdude stk500_recv() programmer is not responding
+avrdude: stk500_getsync(): not in sync: resp=0x00
+</code></pre>
+</div>
+<p>起初以为时板子坏了，测试 FT232RL RX 和 TX 都没问题，换了另一快 Pro Mini 版还是一样错误，
+百度得知要在烧写的时候按写复位按钮，但按下按钮的时机很难把握，导致烧写成功率极低。
+又尝试加了一根导线链接 FT232RL 的 RTS 和 Pro Mini 版的 RTS 引脚，发现还是不行。
+Pro Mini 正常运行或烧写的过程中需要保持 RTS 引脚时高电平，在复位运行或烧写时只需RTS发生<code class="highlighter-rouge">高电平-低电平-高电平</code>的跳变要连接RTS之后发现Arduino IDE 烧写之后一直都保持在电平，导致烧写不能正常进行。</p>
+
+<p>最后在两个 RTS 引脚之间加一个 6.8uF 的电容解决了这个问题，烧写成功率将近100%。下面波形图显示了
+在烧写的时候FT232RL RTS引脚和Pro Mini RTS 引脚的电压变化：</p>
+
+<p><img src="/assets/img/ft232-rts-arduino-pro-mini-rts-level.png" alt="ft232-rts-arduino-pro-mini-rts-level" /></p>
+
+<p>绿色是 FT232RL RTS 引脚电平变化情况，黄色的是 Pro Mini RTS 引脚。可以看到引脚电平变化满足上述要求。<code class="highlighter-rouge">1,2</code>次点品变化应该是烧写和烧写完之后的复位运行。</p>
 
     </article>
     
@@ -108,28 +151,16 @@ so，便宜有便宜的道理，暂且用着。</p>
     </section>
     <section class="post-footer-item read-next">
         
+        
         <div class="read-next-item">
-            <a href="/arduino/iot/2017/09/14/arduino-pro-mini-automatic-upload-program.html" class="read-next-link"></a>
+            <a href="/%E6%9D%82%E8%AE%B0/2017/09/13/laptop-ac-adapter.html" class="read-next-link"></a>
             <section>
-                <span>Arduino Pro Mini 免复位烧写</span>
-                <p>自从高中毕业起就放下了电子方面的兴趣，最近心血来潮又捣鼓起来，就买了一个 Arduino Pro Mini 版，某...</p>
+                <span>杂牌笔记本电源适配器</span>
+                <p>最近在某宝上买了一个笔记本的电源适配器，这样可以一个放家里，一个放公司，省得上班背来背去。虽然买家总是会标着“原装...</p>
             </section>
             
             <div class="filter"></div>
-            <img src="/assets/img/arduino-pro-mini.png" alt="">
-            
-        </div>
-        
-        
-        <div class="read-next-item">
-            <a href="/%E6%9D%82%E8%AE%B0/2017/09/12/ubuntu16.04-create-desktop-lanucher.html" class="read-next-link"></a>
-            <section>
-                <span>Ubuntu 16.0创建启动图标</span>
-                <p>1. 安装 gnome-panel$ sudo apt install gnome-panel</p>
-            </section>
-            
-            <div class="filter"></div>
-            <img src="/assets/img/ubuntu-new-desktop-launcher.png" alt="">
+            <img src="/assets/img/laptop-ac-adapter.png" alt="">
             
         </div>
         
