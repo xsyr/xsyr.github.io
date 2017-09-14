@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arduino 超声波测距 - xsyr的独立博客</title>
+    <meta name="author"  content="黄成林">
+    <meta name="description" content="Arduino 超声波测距">
+    <meta name="keywords"  content="Arduino, IoT">
+    <!-- Open Graph -->
+    <meta property="og:title" content="Arduino 超声波测距 - xsyr的独立博客">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://xsyr.github.io/arduino/iot/2017/09/14/arduino-ultrasonic-distance.html">
+    <meta property="og:description" content="经验源于爱折腾, 喜欢折腾各种新鲜玩意儿。">
+    <meta property="og:site_name" content="xsyr的独立博客">
+    <link rel="shortcut icon" href="/assets/img/favicon.ico">
+    <link rel="stylesheet" href="//cdn.staticfile.org/normalize/6.0.0/normalize.min.css">
+    <link rel="stylesheet" href="//at.alicdn.com/t/font_roc50gemkxpw4s4i.css">
+    <link rel="stylesheet" href="/assets/css/github-markdown.css">
+    <link rel="stylesheet" href="/assets/css/prism.css">
+    <link rel="stylesheet" href="/assets/css/share.min.css">
+    <link rel="stylesheet" href="/assets/css/app.min.css">
+</head>
+<body>
+    <!--[if lt IE 10]>
+<div class="alert-danger" role="alert">你的浏览器实在太太太旧了，放学别走，升级完浏览器再说！<a target="_blank" class="alert-link" href="http://browsehappy.com">立即升级</a></div>
+<![endif]-->
+<input id="nm-switch" type="hidden" value="false">
+
+<header class="g-header">
+    <div class="g-logo">
+        <a href="/"></a>
+    </div>
+    <i id="menu-toggle" class="iconfont icon-menu"></i>
+    <nav class="g-nav">
+        <ul>
+            
+            <li><a href="/">home</a></li>
+            
+            <li><a href="/tags.html">tags</a></li>
+            
+        </ul>
+    </nav>
+</header>
+
+
+<header class="g-banner post-header post-pattern-circuitBoard bgcolor-default " data-theme="default">
+    <div class="post-wrapper">
+        <div class="post-tags">
+            
+            
+            <a href="/tags#Arduino" class="post-tag">Arduino</a>
+            
+            <a href="/tags#IoT" class="post-tag">IoT</a>
+            
+            
+        </div>
+        <h1>Arduino 超声波测距</h1>
+        <div class="post-meta">
+            <span class="post-meta-item"><i class="iconfont icon-author"></i><a href="https://xsyr.github.io" target="_blank" rel="author">黄成林</a></></span>
+            <time class="post-meta-item" datetime="17-09-14"><i class="iconfont icon-date"></i>14 Sep 2017</time>
+        </div>
+    </div>
+    
+    <div class="filter"></div>
+    <div class="post-cover" style="background: url('/assets/img/arduino-ultrasonic-distance.png') center no-repeat; background-size: cover;">
+    
+</header>
+
+<div class="post-content">
+    
+    <h2 class="post-subtitle"></h2>
+    
+    <article class="markdown-body">
+        <p>超声波通过发送一束超声波，再计算接收时的时间间隔 sec，就可以通过公式
+距离 = (sec * 340)/2 计算出来。不过实际上温度，湿度都会造成结果误差，但在精度要求不高的场合，
+简单的计算就可以满足。超声波收发模块：
+<img src="/assets/img/arduino-ultrasonic-distance.png" alt="Arduino-ultrasonic-distance" /></p>
+
+<h1 id="1-电路引脚连接">1. 电路引脚连接</h1>
+<p>超声波模块包含4个引脚，分别为 Vcc, Trig, Echo, GND，给 Trig 引脚一个10uS以上的低电平脉冲信号，
+Echo 收到信号后会输出高电平，计算高电平的时间就是间隔时间。
+这里计算间隔时间通过中断来计算，即低电平变为高电平的时候记下时间 t1, 高电平变为低电平的时候几下时间
+t2，时间间隔 = t2 - t1。采用中断而不使用轮询是为了提高时间精度。</p>
+
+<p>Arduino 只提供2,3两个可中断的引脚，这里使用2引脚监听 Echo 的电平变化，3引脚连接 Echo 触发信号．</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Arduino</th>
+      <th>超声波模块</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Vcc</td>
+      <td>Vcc</td>
+    </tr>
+    <tr>
+      <td>GND</td>
+      <td>GND</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>Echo</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>Trig</td>
+    </tr>
+  </tbody>
+</table>
+
+<h1 id="测距代码">测距代码</h1>
+<div class="language-cpp highlighter-rouge"><pre class="highlight line-numbers "><code>
+<span class="kt">unsigned</span> <span class="kt">long</span> <span class="n">elapsed</span><span class="p">;</span>
+
+<span class="kt">void</span> <span class="nf">echo</span><span class="p">()</span> <span class="p">{</span>
+  <span class="n">noInterrupts</span><span class="p">();</span>
+  <span class="kt">int</span> <span class="n">s</span> <span class="o">=</span> <span class="n">digitalRead</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
+  <span class="k">if</span><span class="p">(</span><span class="n">s</span> <span class="o">==</span> <span class="n">HIGH</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">elapsed</span> <span class="o">=</span> <span class="n">micros</span><span class="p">();</span>           <span class="c1">// Echo 变为高电平时记下时间　t1
+</span>  <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+    <span class="n">elapsed</span> <span class="o">=</span> <span class="n">micros</span><span class="p">()</span> <span class="o">-</span> <span class="n">elapsed</span><span class="p">;</span> <span class="c1">// Echo 变为低电平时记下时间　t2
+</span>  <span class="p">}</span>
+
+  <span class="n">interrupts</span><span class="p">();</span>
+<span class="p">}</span>
+
+<span class="c1">// the setup function runs once when you press reset or power the board
+</span><span class="kt">void</span> <span class="nf">setup</span><span class="p">()</span> <span class="p">{</span>
+
+  <span class="c1">// 引脚３默认为低电平，15uS的高电平脉冲会触发发送测距超声包．
+</span>  <span class="n">pinMode</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">OUTPUT</span><span class="p">);</span>
+  <span class="n">digitalWrite</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">LOW</span><span class="p">);</span>
+
+  <span class="c1">// 引脚２可中断，电平跳变会触发中断
+</span>  <span class="n">pinMode</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">INPUT</span><span class="p">);</span>
+  <span class="n">attachInterrupt</span><span class="p">(</span><span class="n">digitalPinToInterrupt</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span> <span class="n">echo</span><span class="p">,</span> <span class="n">CHANGE</span><span class="p">);</span>
+
+  <span class="n">Serial</span><span class="p">.</span><span class="n">begin</span><span class="p">(</span><span class="mi">9600</span><span class="p">);</span>
+
+  <span class="n">elapsed</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="c1">// the loop function runs over and over again forever
+</span><span class="kt">void</span> <span class="nf">loop</span><span class="p">()</span> <span class="p">{</span>
+  <span class="k">while</span><span class="p">(</span><span class="nb">true</span><span class="p">)</span> <span class="p">{</span>
+
+    <span class="c1">// 发出 15微秒的脉冲.
+</span>    <span class="n">digitalWrite</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">HIGH</span><span class="p">);</span>
+    <span class="n">delayMicroseconds</span><span class="p">(</span><span class="mi">15</span><span class="p">);</span>
+    <span class="n">digitalWrite</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">LOW</span><span class="p">);</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="n">Serial</span><span class="p">)</span> <span class="p">{</span>
+      <span class="kt">float</span> <span class="n">sec</span> <span class="o">=</span> <span class="kt">float</span><span class="p">(</span><span class="n">elapsed</span><span class="p">)</span><span class="o">/</span><span class="mi">1000000</span><span class="p">;</span>
+      <span class="kt">float</span> <span class="n">distance</span> <span class="o">=</span> <span class="p">(</span><span class="n">sec</span> <span class="o">*</span> <span class="mi">340</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="mi">100</span><span class="p">;</span> <span class="c1">// *100 米转换为厘米
+</span>      <span class="n">Serial</span><span class="p">.</span><span class="n">print</span><span class="p">(</span><span class="n">sec</span><span class="o">*</span><span class="mi">1000</span><span class="p">,</span> <span class="mi">3</span><span class="p">);</span>
+      <span class="n">Serial</span><span class="p">.</span><span class="n">print</span><span class="p">(</span><span class="s">" ms, "</span><span class="p">);</span>
+      <span class="n">Serial</span><span class="p">.</span><span class="n">print</span><span class="p">(</span><span class="n">distance</span><span class="p">,</span> <span class="mi">2</span><span class="p">);</span>
+      <span class="n">Serial</span><span class="p">.</span><span class="n">print</span><span class="p">(</span><span class="s">" cm</span><span class="se">\n</span><span class="s">"</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="n">digitalWrite</span><span class="p">(</span><span class="n">LED_BUILTIN</span><span class="p">,</span> <span class="n">HIGH</span><span class="p">);</span>
+    <span class="n">delay</span><span class="p">(</span><span class="mi">500</span><span class="p">);</span>
+    <span class="n">digitalWrite</span><span class="p">(</span><span class="n">LED_BUILTIN</span><span class="p">,</span> <span class="n">LOW</span><span class="p">);</span>
+    <span class="n">delay</span><span class="p">(</span><span class="mi">500</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre>
+</div>
+
+<h2 id="arduino-测试结果">Arduino 测试结果</h2>
+<p><img src="/assets/img/arduino-ultrasonic-tty.png" alt="arduino-ultrasonic-tty" /></p>
+
+<p>##　逻辑分析仪分析结果</p>
+
+<p>这里看到的　Arduino 测到的时间间隔是　7.3ms 左右，下面是逻辑分析仪抓取结果：</p>
+
+<p><img src="/assets/img/arduino-ultrasonic-login-analyze.png" alt="arduino-ultrasonic-login-analyze" /> Echo 高电平持续时间约　7.3ms，和　Arduino 测到的结果时很相近的，可见用中断的方式可以得到
+比较精确的结果．</p>
+
+    </article>
+    
+    <div class="social-share-wrapper">
+        <div class="social-share"></div>
+    </div>
+    
+</div>
+
+<section class="author-detail">
+    <section class="post-footer-item author-card">
+        <div class="avatar">
+            <img src="/assets/img/profile.jpg" alt="">
+        </div>
+        <div class="author-name" rel="author">黄成林</div>
+        <div class="bio">
+            <p>后端开发者，热爱技术，简单爱折腾</p>
+        </div>
+        
+        <ul class="sns-links">
+            
+            <li>
+                <a href="//github.com/xsyr" target="_blank">
+                    <i class="iconfont icon-github"></i>
+                </a>
+            </li>
+            
+        </ul>
+        
+    </section>
+    <section class="post-footer-item read-next">
+        
+        
+        <div class="read-next-item">
+            <a href="/arduino/iot/2017/09/14/arduino-pcf8591-read.html" class="read-next-link"></a>
+            <section>
+                <span>Arduino 读写 PCF8591 芯片</span>
+                <p>PCF8591 芯片支持4通道 8bit ADC，1通道 8bit DAC，它提供 I2C 接口进行数据读写。</p>
+            </section>
+            
+            <div class="filter"></div>
+            <img src="/assets/img/arduino-pcf8591.png" alt="">
+            
+        </div>
+        
+    </section>
+    
+</section>
+
+<footer class="g-footer">
+    <section>xsyr的独立博客 © 2017</section>
+    <section>Powered by <a href="//jekyllrb.com">Jekyll</a> | <a href="https://github.com/kaeyleo/jekyll-theme-H2O">Theme H2O</a></section>
+</footer>
+
+<script src="/assets/js/social-share.min.js"></script>
+<script>
+    socialShare('.social-share', {
+        sites: ['wechat','weibo','douban','twitter'],
+        wechatQrcodeTitle: "分享到微信朋友圈",
+        wechatQrcodeHelper: '<p>扫码后点击右上角</p><p>将本文分享至朋友圈</p>'
+    });
+</script>
+<script>
+/**
+*  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+*  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
+/*
+var disqus_config = function () {
+this.page.url = PAGE_URL;  // Replace PAGE_URL with your page's canonical URL variable
+this.page.identifier = PAGE_IDENTIFIER; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+};
+*/
+(function() { // DON'T EDIT BELOW THIS LINE
+var d = document, s = d.createElement('script');
+/*写入自己的disqus信息*/
+s.src = '#';
+s.setAttribute('data-timestamp', +new Date());
+(d.head || d.body).appendChild(s);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
+<script src="/assets/js/prism.js"></script>
+<script src="/assets/js/index.min.js"></script>
+</body>
+</html>
