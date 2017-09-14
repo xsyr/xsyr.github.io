@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arduino 读写 PCF8591 芯片 - xsyr的独立博客</title>
+    <meta name="author"  content="黄成林">
+    <meta name="description" content="Arduino 读写 PCF8591 芯片">
+    <meta name="keywords"  content="Arduino, PCF8591">
+    <!-- Open Graph -->
+    <meta property="og:title" content="Arduino 读写 PCF8591 芯片 - xsyr的独立博客">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://xsyr.github.io/arduino/iot/2017/09/14/arduino-pcf8591-read.html">
+    <meta property="og:description" content="经验源于爱折腾, 喜欢折腾各种新鲜玩意儿。">
+    <meta property="og:site_name" content="xsyr的独立博客">
+    <link rel="shortcut icon" href="/assets/img/favicon.ico">
+    <link rel="stylesheet" href="//cdn.staticfile.org/normalize/6.0.0/normalize.min.css">
+    <link rel="stylesheet" href="//at.alicdn.com/t/font_roc50gemkxpw4s4i.css">
+    <link rel="stylesheet" href="/assets/css/github-markdown.css">
+    <link rel="stylesheet" href="/assets/css/prism.css">
+    <link rel="stylesheet" href="/assets/css/share.min.css">
+    <link rel="stylesheet" href="/assets/css/app.min.css">
+</head>
+<body>
+    <!--[if lt IE 10]>
+<div class="alert-danger" role="alert">你的浏览器实在太太太旧了，放学别走，升级完浏览器再说！<a target="_blank" class="alert-link" href="http://browsehappy.com">立即升级</a></div>
+<![endif]-->
+<input id="nm-switch" type="hidden" value="false">
+
+<header class="g-header">
+    <div class="g-logo">
+        <a href="/"></a>
+    </div>
+    <i id="menu-toggle" class="iconfont icon-menu"></i>
+    <nav class="g-nav">
+        <ul>
+            
+            <li><a href="/">home</a></li>
+            
+            <li><a href="/tags.html">tags</a></li>
+            
+        </ul>
+    </nav>
+</header>
+
+
+<header class="g-banner post-header post-pattern-circuitBoard bgcolor-default " data-theme="default">
+    <div class="post-wrapper">
+        <div class="post-tags">
+            
+            
+            <a href="/tags#Arduino" class="post-tag">Arduino</a>
+            
+            <a href="/tags#PCF8591" class="post-tag">PCF8591</a>
+            
+            
+        </div>
+        <h1>Arduino 读写 PCF8591 芯片</h1>
+        <div class="post-meta">
+            <span class="post-meta-item"><i class="iconfont icon-author"></i><a href="https://xsyr.github.io" target="_blank" rel="author">黄成林</a></></span>
+            <time class="post-meta-item" datetime="17-09-14"><i class="iconfont icon-date"></i>14 Sep 2017</time>
+        </div>
+    </div>
+    
+    <div class="filter"></div>
+    <div class="post-cover" style="background: url('/assets/img/arduino-pcf8591.png') center no-repeat; background-size: cover;">
+    
+</header>
+
+<div class="post-content">
+    
+    <h2 class="post-subtitle"></h2>
+    
+    <article class="markdown-body">
+        <p>PCF8591 芯片支持4通道 8bit ADC，1通道 8bit DAC，它提供 I2C 接口进行数据读写。</p>
+
+<p><img src="/assets/img/arduino-pcf8591.png" alt="Arduino-pcf8591" /></p>
+
+<h1 id="1-引脚连接">1. 引脚连接</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Arduino</th>
+      <th>PCF8591</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>VCC</td>
+      <td>VDD</td>
+    </tr>
+    <tr>
+      <td>GND</td>
+      <td>AGND</td>
+    </tr>
+    <tr>
+      <td>A4(SDA)</td>
+      <td>SDA</td>
+    </tr>
+    <tr>
+      <td>A5(SCL)</td>
+      <td>SCL</td>
+    </tr>
+  </tbody>
+</table>
+
+<h1 id="2-addr-地址">2. Addr 地址</h1>
+<p><img src="/assets/img/pcf8591-addr-byte.png" alt="PCF8591-addr-byte" /></p>
+
+<p>上图的板子上已经将 A0,A1,A2 三个引脚接 GND，所以Addr 控制字的 A0, A1, A2 写 000。</p>
+
+<h1 id="3-控制字">3. 控制字</h1>
+<p><img src="/assets/img/pcf8591-ctrl-byte.png" alt="pcf8591-ctrl-byte" /></p>
+
+<p>第7位固定为0, 第6bit 为DAC使能，设置为1时开启。第5,4位控制 ADC 模式。第3位固定为0,
+如果第2位为1,则在读取 ADC 时轮流读取各个通道 0-&gt;1-&gt;2-&gt;3-&gt;0-&gt;1-&gt;…。
+第1,0位选择通道。</p>
+
+<h1 id="4-读-adc-结果">4. 读 ADC 结果</h1>
+<div class="language-cpp highlighter-rouge"><pre class="highlight line-numbers "><code><span class="cp">#include &lt;Wire.h&gt;
+</span>
+<span class="cp">#define ADDR 0B1001000
+#define EDAC 0B01000000
+</span>
+<span class="cp">#define CHAN0  0B00000000
+#define CHAN1  0B00000001
+#define CHAN2  0B00000010
+#define CHAN3  0B00000011
+</span>
+<span class="kt">void</span> <span class="nf">setup</span><span class="p">()</span> <span class="p">{</span>
+  <span class="n">Wire</span><span class="p">.</span><span class="n">begin</span><span class="p">();</span>
+  <span class="n">Wire</span><span class="p">.</span><span class="n">setClock</span><span class="p">(</span><span class="mi">100000</span><span class="p">);</span> <span class="c1">// 设置比特率，测试 100kbps 可以稳定运行。
+</span>
+  <span class="n">Serial</span><span class="p">.</span><span class="n">begin</span><span class="p">(</span><span class="mi">9600</span><span class="p">);</span> <span class="c1">// 设置串口波特率
+</span><span class="p">}</span>
+
+
+<span class="kt">void</span> <span class="nf">ADC_Read</span><span class="p">()</span> <span class="p">{</span>
+  <span class="n">Wire</span><span class="p">.</span><span class="n">beginTransmission</span><span class="p">(</span><span class="n">ADDR</span><span class="p">);</span> <span class="c1">// 发送 Addr 控制字
+</span>  <span class="n">Wire</span><span class="p">.</span><span class="n">write</span><span class="p">(</span><span class="n">CHAN0</span><span class="p">);</span>            <span class="c1">// 选择 通道0
+</span>  <span class="n">Wire</span><span class="p">.</span><span class="n">endTransmission</span><span class="p">();</span>
+
+  <span class="n">Wire</span><span class="p">.</span><span class="n">requestFrom</span><span class="p">(</span><span class="n">ADDR</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span> <span class="c1">// 等待 SLAVE(PCF8591)发送ADC值，等待一个字节
+</span>  <span class="k">while</span><span class="p">(</span><span class="n">Wire</span><span class="p">.</span><span class="n">available</span><span class="p">())</span> <span class="p">{</span>
+    <span class="n">byte</span> <span class="n">v</span> <span class="o">=</span> <span class="n">Wire</span><span class="p">.</span><span class="n">read</span><span class="p">();</span>
+    <span class="n">Serial</span><span class="p">.</span><span class="n">print</span><span class="p">(</span><span class="n">v</span><span class="p">);</span>
+    <span class="n">Serial</span><span class="p">.</span><span class="n">print</span><span class="p">(</span><span class="s">"</span><span class="se">\n</span><span class="s">"</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kt">void</span> <span class="nf">loop</span><span class="p">()</span> <span class="p">{</span>
+  <span class="n">ADC_Read</span><span class="p">();</span>
+  <span class="n">delay</span><span class="p">(</span><span class="mi">200</span><span class="p">);</span>
+<span class="p">}</span>
+
+</code></pre>
+</div>
+<p><img src="/assets/img/pcf8591-read-dac.png" alt="PCF8591-read-dac" /></p>
+
+<h1 id="5-写-dac">5. 写 DAC</h1>
+<div class="language-cpp highlighter-rouge"><pre class="highlight line-numbers "><code><span class="p">...</span> <span class="c1">// 参考上面代码常量定义
+</span>
+<span class="cp">#define PI 3.14159265
+</span><span class="kt">float</span> <span class="n">n</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+<span class="kt">void</span> <span class="nf">Sin</span><span class="p">()</span> <span class="p">{</span>
+  <span class="n">Wire</span><span class="p">.</span><span class="n">beginTransmission</span><span class="p">(</span><span class="n">ADDR</span><span class="p">);</span> <span class="c1">// 发送 ADDR 控制字
+</span>  <span class="n">Wire</span><span class="p">.</span><span class="n">write</span><span class="p">(</span><span class="n">EDAC</span><span class="p">);</span>             <span class="c1">// 使能 DAC
+</span>  <span class="kt">double</span> <span class="n">r</span>  <span class="o">=</span> <span class="n">sin</span><span class="p">(</span><span class="n">n</span> <span class="o">*</span> <span class="n">PI</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span>
+  <span class="k">if</span><span class="p">(</span><span class="n">r</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+  <span class="p">}</span>
+
+  <span class="n">byte</span> <span class="n">val</span> <span class="o">=</span> <span class="p">(</span><span class="n">byte</span><span class="p">)(</span><span class="n">r</span> <span class="o">*</span> <span class="mi">2</span><span class="o">/</span><span class="mi">5</span> <span class="o">*</span> <span class="mi">256</span><span class="p">);</span>
+  <span class="n">Wire</span><span class="p">.</span><span class="n">write</span><span class="p">(</span><span class="n">val</span><span class="p">);</span>  <span class="c1">// 写 DAC 值
+</span>  <span class="n">Wire</span><span class="p">.</span><span class="n">endTransmission</span><span class="p">();</span>
+  <span class="n">n</span> <span class="o">+=</span> <span class="mf">0.001</span><span class="p">;</span>
+<span class="p">}</span>
+
+
+<span class="kt">void</span> <span class="nf">loop</span><span class="p">()</span> <span class="p">{</span>
+  <span class="n">Sin</span><span class="p">()</span>
+<span class="p">}</span>
+</code></pre>
+</div>
+
+<p><img src="/assets/img/pcf8591-write-dac.png" alt="pcf8591-write-dac" /></p>
+
+    </article>
+    
+    <div class="social-share-wrapper">
+        <div class="social-share"></div>
+    </div>
+    
+</div>
+
+<section class="author-detail">
+    <section class="post-footer-item author-card">
+        <div class="avatar">
+            <img src="/assets/img/profile.jpg" alt="">
+        </div>
+        <div class="author-name" rel="author">黄成林</div>
+        <div class="bio">
+            <p>后端开发者，热爱技术，简单爱折腾</p>
+        </div>
+        
+        <ul class="sns-links">
+            
+            <li>
+                <a href="//github.com/xsyr" target="_blank">
+                    <i class="iconfont icon-github"></i>
+                </a>
+            </li>
+            
+        </ul>
+        
+    </section>
+    <section class="post-footer-item read-next">
+        
+        
+        <div class="read-next-item">
+            <a href="/arduino/iot/2017/09/14/arduino-pro-mini-automatic-upload-program.html" class="read-next-link"></a>
+            <section>
+                <span>Arduino Pro Mini 免复位烧写</span>
+                <p>自从高中毕业起就放下了电子方面的兴趣，最近心血来潮又捣鼓起来，就买了一个 Arduino Pro Mini 版，某...</p>
+            </section>
+            
+            <div class="filter"></div>
+            <img src="/assets/img/arduino-pro-mini.png" alt="">
+            
+        </div>
+        
+    </section>
+    
+</section>
+
+<footer class="g-footer">
+    <section>xsyr的独立博客 © 2017</section>
+    <section>Powered by <a href="//jekyllrb.com">Jekyll</a> | <a href="https://github.com/kaeyleo/jekyll-theme-H2O">Theme H2O</a></section>
+</footer>
+
+<script src="/assets/js/social-share.min.js"></script>
+<script>
+    socialShare('.social-share', {
+        sites: ['wechat','weibo','douban','twitter'],
+        wechatQrcodeTitle: "分享到微信朋友圈",
+        wechatQrcodeHelper: '<p>扫码后点击右上角</p><p>将本文分享至朋友圈</p>'
+    });
+</script>
+<script>
+/**
+*  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+*  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
+/*
+var disqus_config = function () {
+this.page.url = PAGE_URL;  // Replace PAGE_URL with your page's canonical URL variable
+this.page.identifier = PAGE_IDENTIFIER; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+};
+*/
+(function() { // DON'T EDIT BELOW THIS LINE
+var d = document, s = d.createElement('script');
+/*写入自己的disqus信息*/
+s.src = '#';
+s.setAttribute('data-timestamp', +new Date());
+(d.head || d.body).appendChild(s);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
+<script src="/assets/js/prism.js"></script>
+<script src="/assets/js/index.min.js"></script>
+</body>
+</html>
