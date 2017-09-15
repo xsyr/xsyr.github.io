@@ -94,11 +94,15 @@ xkb_keymap <span class="o">{</span>
   ...
   // key &lt;RTSH&gt; { [ Shift_R ] };
   key &lt;RTSH&gt; {  [ Up ] };
-
-  // key &lt;RCTL&gt; { [ Control_R ] };
-  key &lt;RCTL&gt; {  [ Left ] };
   ...
 }
+
+xkb_symbols "editing" {
+	...
+  // key  &lt;UP&gt; { [ Up ] };
+  key &lt;UP&gt; { [ Shift_R ] };
+  ...
+};
 
 </code></pre>
 </div>
