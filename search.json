@@ -1,6 +1,12 @@
 [
   
     {
+      "title"    : "XiaoXin 13 Air, Ubuntu 16.04 重新映射键盘",
+      "tags"     : "杂记 ubuntu",
+      "url"      : "/%E6%9D%82%E8%AE%B0/2017/09/16/ubuntu-16.04-remap-keyboard.html"
+    } ,
+  
+    {
       "title"    : "Arduino 超声波测距",
       "tags"     : "Arduino IoT",
       "url"      : "/arduino/iot/2017/09/14/arduino-ultrasonic-distance.html"
