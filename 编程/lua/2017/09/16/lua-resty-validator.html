@@ -76,7 +76,7 @@
 <p>最重要的一点是, openresty + lua 已经很好的处理并行(开多个 nginx worker即可)和并发(lua coroutine),
 lua vm 已经默默的处理了阻塞的IO操作,开发人员可以用写同步代码的方式实现异步.</p>
 
-<p>既然是 Web Api,自然少不了对参数的校验, validator库实现对 lua table 的校验.</p>
+<p>既然是 Web Api,自然少不了对参数的校验, <a href="https://github.com/xsyr/lua-resty-validator">validator</a>库实现对 lua table 的校验.</p>
 
 <h1 id="安装">安装</h1>
 <p>把 validator.lua 文件放入 openresty 安装目录的 <code class="highlighter-rouge">lualib/resty/</code> 下即可.</p>
