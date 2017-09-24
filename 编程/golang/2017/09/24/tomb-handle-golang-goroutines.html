@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>tomb - 管理 goroutine - xsyr的独立博客</title>
+    <meta name="author"  content="黄成林">
+    <meta name="description" content="tomb - 管理 goroutine">
+    <meta name="keywords"  content="tomb">
+    <!-- Open Graph -->
+    <meta property="og:title" content="tomb - 管理 goroutine - xsyr的独立博客">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://xsyr.github.io/%E7%BC%96%E7%A8%8B/golang/2017/09/24/tomb-handle-golang-goroutines.html">
+    <meta property="og:description" content="经验源于爱折腾, 喜欢折腾各种新鲜玩意儿。">
+    <meta property="og:site_name" content="xsyr的独立博客">
+    <link rel="shortcut icon" href="/assets/img/favicon.ico">
+    <link rel="stylesheet" href="//cdn.staticfile.org/normalize/6.0.0/normalize.min.css">
+    <link rel="stylesheet" href="//at.alicdn.com/t/font_roc50gemkxpw4s4i.css">
+    <link rel="stylesheet" href="/assets/css/github-markdown.css">
+    <link rel="stylesheet" href="/assets/css/prism.css">
+    <link rel="stylesheet" href="/assets/css/share.min.css">
+    <link rel="stylesheet" href="/assets/css/app.min.css">
+</head>
+<body>
+    <!--[if lt IE 10]>
+<div class="alert-danger" role="alert">你的浏览器实在太太太旧了，放学别走，升级完浏览器再说！<a target="_blank" class="alert-link" href="http://browsehappy.com">立即升级</a></div>
+<![endif]-->
+<input id="nm-switch" type="hidden" value="false">
+
+<header class="g-header">
+    <div class="g-logo">
+        <a href="/"></a>
+    </div>
+    <i id="menu-toggle" class="iconfont icon-menu"></i>
+    <nav class="g-nav">
+        <ul>
+            
+            <li><a href="/">home</a></li>
+            
+            <li><a href="/tags.html">tags</a></li>
+            
+        </ul>
+    </nav>
+</header>
+
+
+<header class="g-banner post-header post-pattern-circuitBoard bgcolor-default post-no-cover" data-theme="default">
+    <div class="post-wrapper">
+        <div class="post-tags">
+            
+            
+            <a href="/tags#tomb" class="post-tag">tomb</a>
+            
+            
+        </div>
+        <h1>tomb - 管理 goroutine</h1>
+        <div class="post-meta">
+            <span class="post-meta-item"><i class="iconfont icon-author"></i><a href="https://xsyr.github.io" target="_blank" rel="author">黄成林</a></></span>
+            <time class="post-meta-item" datetime="17-09-24"><i class="iconfont icon-date"></i>24 Sep 2017</time>
+        </div>
+    </div>
+    
+</header>
+
+<div class="post-content">
+    
+    <article class="markdown-body">
+        <p>日常开发中,最常见的就是处理并发问题,比如要完成一个业务操作,需要读取多个数据源(Map),
+得到所有数据之后再进行汇总(Reduce)操作,最终完成业务操作.如果某个数据源读取操作失败,
+整个业务操作当失败处理.</p>
+
+<p>例如,需要同时拿到 redis 和 mysql 的数据才能继续业务流程,常见写法如下:</p>
+<div class="language-go highlighter-rouge"><pre class="highlight line-numbers "><code><span class="k">func</span><span class="x"> </span><span class="n">queryRedisOld</span><span class="p">(</span><span class="n">value</span><span class="x"> </span><span class="o">*</span><span class="kt">int</span><span class="p">,</span><span class="x"> </span><span class="n">err</span><span class="x"> </span><span class="k">chan</span><span class="x"> </span><span class="kt">error</span><span class="p">)</span><span class="x"> </span><span class="p">{</span><span class="x">
+    </span><span class="k">if</span><span class="x"> </span><span class="n">value</span><span class="x"> </span><span class="o">==</span><span class="x"> </span><span class="no">nil</span><span class="x"> </span><span class="p">{</span><span class="x">
+        </span><span class="n">err</span><span class="o">&lt;-</span><span class="n">fmt</span><span class="o">.</span><span class="n">Errorf</span><span class="p">(</span><span class="s">"null pointer"</span><span class="p">)</span><span class="x">
+        </span><span class="k">return</span><span class="x">
+    </span><span class="p">}</span><span class="x">
+    </span><span class="o">*</span><span class="n">value</span><span class="x"> </span><span class="o">=</span><span class="x"> </span><span class="m">10</span><span class="x">
+    </span><span class="n">err</span><span class="o">&lt;-</span><span class="no">nil</span><span class="x">
+</span><span class="p">}</span><span class="x">
+
+</span><span class="k">func</span><span class="x"> </span><span class="n">queryMySQLOld</span><span class="p">(</span><span class="n">value</span><span class="x"> </span><span class="o">*</span><span class="kt">int</span><span class="p">,</span><span class="x"> </span><span class="n">err</span><span class="x"> </span><span class="k">chan</span><span class="x"> </span><span class="kt">error</span><span class="p">)</span><span class="x"> </span><span class="p">{</span><span class="x">
+    </span><span class="k">if</span><span class="x"> </span><span class="n">value</span><span class="x"> </span><span class="o">==</span><span class="x"> </span><span class="no">nil</span><span class="x"> </span><span class="p">{</span><span class="x">
+        </span><span class="n">err</span><span class="o">&lt;-</span><span class="n">fmt</span><span class="o">.</span><span class="n">Errorf</span><span class="p">(</span><span class="s">"null pointer"</span><span class="p">)</span><span class="x">
+        </span><span class="k">return</span><span class="x">
+    </span><span class="p">}</span><span class="x">
+    </span><span class="o">*</span><span class="n">value</span><span class="x"> </span><span class="o">=</span><span class="x"> </span><span class="m">20</span><span class="x">
+    </span><span class="n">err</span><span class="o">&lt;-</span><span class="no">nil</span><span class="x">
+</span><span class="p">}</span><span class="x">
+
+</span><span class="k">func</span><span class="x"> </span><span class="n">oldFashion</span><span class="p">()</span><span class="x"> </span><span class="p">{</span><span class="x">
+    </span><span class="k">var</span><span class="x"> </span><span class="n">r</span><span class="p">,</span><span class="x"> </span><span class="n">m</span><span class="x"> </span><span class="kt">int</span><span class="x">
+    </span><span class="n">errR</span><span class="p">,</span><span class="x"> </span><span class="n">errM</span><span class="x"> </span><span class="o">:=</span><span class="x"> </span><span class="nb">make</span><span class="p">(</span><span class="k">chan</span><span class="x"> </span><span class="kt">error</span><span class="p">),</span><span class="x"> </span><span class="nb">make</span><span class="p">(</span><span class="k">chan</span><span class="x"> </span><span class="kt">error</span><span class="p">)</span><span class="x">
+    </span><span class="k">go</span><span class="x"> </span><span class="n">queryRedisOld</span><span class="p">(</span><span class="o">&amp;</span><span class="n">r</span><span class="p">,</span><span class="x"> </span><span class="n">errR</span><span class="p">)</span><span class="x">
+    </span><span class="k">go</span><span class="x"> </span><span class="n">queryMySQLOld</span><span class="p">(</span><span class="o">&amp;</span><span class="n">m</span><span class="p">,</span><span class="x"> </span><span class="n">errM</span><span class="p">)</span><span class="x">
+
+    </span><span class="k">if</span><span class="x"> </span><span class="n">err</span><span class="x"> </span><span class="o">:=</span><span class="x"> </span><span class="o">&lt;-</span><span class="n">errR</span><span class="p">;</span><span class="x"> </span><span class="n">err</span><span class="x"> </span><span class="o">!=</span><span class="x"> </span><span class="no">nil</span><span class="x"> </span><span class="p">{</span><span class="x">
+        </span><span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="n">err</span><span class="p">)</span><span class="x">
+        </span><span class="k">return</span><span class="x">
+    </span><span class="p">}</span><span class="x">
+
+    </span><span class="k">if</span><span class="x"> </span><span class="n">err</span><span class="x"> </span><span class="o">:=</span><span class="x"> </span><span class="o">&lt;-</span><span class="n">errM</span><span class="p">;</span><span class="x"> </span><span class="n">err</span><span class="x"> </span><span class="o">!=</span><span class="x"> </span><span class="no">nil</span><span class="x"> </span><span class="p">{</span><span class="x">
+        </span><span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="n">err</span><span class="p">)</span><span class="x">
+        </span><span class="k">return</span><span class="x">
+    </span><span class="p">}</span><span class="x">
+
+    </span><span class="n">fmt</span><span class="o">.</span><span class="n">Printf</span><span class="p">(</span><span class="s">"r = %d, m = %d</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span><span class="x"> </span><span class="n">r</span><span class="p">,</span><span class="x"> </span><span class="n">m</span><span class="p">)</span><span class="x">
+</span><span class="p">}</span><span class="x">
+
+</span><span class="k">func</span><span class="x"> </span><span class="n">main</span><span class="p">()</span><span class="x"> </span><span class="p">{</span><span class="x">
+    </span><span class="n">oldFashion</span><span class="p">()</span><span class="x">
+</span><span class="p">}</span><span class="x">
+</span></code></pre>
+</div>
+
+<h1 id="tomb">tomb</h1>
+<p><a href="https://github.com/xsyr/tomb">tomb</a> 能更优雅的处理这种情况, <code class="highlighter-rouge">tomb.Gos(...)</code>能并行执行多个
+操作:</p>
+<div class="language-go highlighter-rouge"><pre class="highlight line-numbers "><code><span class="k">package</span><span class="x"> </span><span class="n">main</span><span class="x">
+
+</span><span class="k">import</span><span class="x"> </span><span class="p">(</span><span class="x">
+    </span><span class="s">"fmt"</span><span class="x">
+
+    </span><span class="s">"github.com/xsyr/tomb"</span><span class="x">
+</span><span class="p">)</span><span class="x">
+
+</span><span class="k">func</span><span class="x"> </span><span class="n">queryRedis</span><span class="p">(</span><span class="n">value</span><span class="x"> </span><span class="o">*</span><span class="kt">int</span><span class="p">)</span><span class="x"> </span><span class="kt">error</span><span class="x"> </span><span class="p">{</span><span class="x">
+    </span><span class="k">if</span><span class="x"> </span><span class="n">value</span><span class="x"> </span><span class="o">==</span><span class="x"> </span><span class="no">nil</span><span class="x"> </span><span class="p">{</span><span class="x">
+        </span><span class="k">return</span><span class="x"> </span><span class="n">fmt</span><span class="o">.</span><span class="n">Errorf</span><span class="p">(</span><span class="s">"null pointer"</span><span class="p">)</span><span class="x">
+    </span><span class="p">}</span><span class="x">
+    </span><span class="o">*</span><span class="n">value</span><span class="x"> </span><span class="o">=</span><span class="x"> </span><span class="m">10</span><span class="x">
+    </span><span class="k">return</span><span class="x"> </span><span class="no">nil</span><span class="x">
+</span><span class="p">}</span><span class="x">
+
+</span><span class="k">func</span><span class="x"> </span><span class="n">queryMySQL</span><span class="p">(</span><span class="n">value</span><span class="x"> </span><span class="o">*</span><span class="kt">int</span><span class="p">)</span><span class="x"> </span><span class="kt">error</span><span class="x"> </span><span class="p">{</span><span class="x">
+    </span><span class="k">if</span><span class="x"> </span><span class="n">value</span><span class="x"> </span><span class="o">==</span><span class="x"> </span><span class="no">nil</span><span class="x"> </span><span class="p">{</span><span class="x">
+        </span><span class="k">return</span><span class="x"> </span><span class="n">fmt</span><span class="o">.</span><span class="n">Errorf</span><span class="p">(</span><span class="s">"null pointer"</span><span class="p">)</span><span class="x">
+    </span><span class="p">}</span><span class="x">
+    </span><span class="o">*</span><span class="n">value</span><span class="x"> </span><span class="o">=</span><span class="x"> </span><span class="m">20</span><span class="x">
+    </span><span class="k">return</span><span class="x"> </span><span class="no">nil</span><span class="x">
+</span><span class="p">}</span><span class="x">
+
+</span><span class="k">func</span><span class="x"> </span><span class="n">newFashion</span><span class="p">()</span><span class="x"> </span><span class="p">{</span><span class="x">
+    </span><span class="k">var</span><span class="x"> </span><span class="n">t</span><span class="x"> </span><span class="n">tomb</span><span class="o">.</span><span class="n">Tomb</span><span class="x">
+
+    </span><span class="k">var</span><span class="x"> </span><span class="n">r</span><span class="p">,</span><span class="x"> </span><span class="n">m</span><span class="x"> </span><span class="kt">int</span><span class="x">
+    </span><span class="n">t</span><span class="o">.</span><span class="n">Gos</span><span class="p">(</span><span class="k">func</span><span class="p">()</span><span class="x"> </span><span class="kt">error</span><span class="x"> </span><span class="p">{</span><span class="x"> </span><span class="k">return</span><span class="x"> </span><span class="n">queryRedis</span><span class="p">(</span><span class="o">&amp;</span><span class="n">r</span><span class="p">)</span><span class="x"> </span><span class="p">},</span><span class="x">
+          </span><span class="k">func</span><span class="p">()</span><span class="x"> </span><span class="kt">error</span><span class="x"> </span><span class="p">{</span><span class="x"> </span><span class="k">return</span><span class="x"> </span><span class="n">queryMySQL</span><span class="p">(</span><span class="o">&amp;</span><span class="n">m</span><span class="p">)</span><span class="x"> </span><span class="p">})</span><span class="x">
+    </span><span class="n">err</span><span class="x"> </span><span class="o">:=</span><span class="x"> </span><span class="n">t</span><span class="o">.</span><span class="n">Wait</span><span class="p">()</span><span class="x">
+    </span><span class="k">if</span><span class="x"> </span><span class="n">err</span><span class="x"> </span><span class="o">!=</span><span class="x"> </span><span class="no">nil</span><span class="x"> </span><span class="p">{</span><span class="x">
+        </span><span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="n">err</span><span class="p">)</span><span class="x">
+    </span><span class="p">}</span><span class="x"> </span><span class="k">else</span><span class="x"> </span><span class="p">{</span><span class="x">
+        </span><span class="c">// do something ...</span><span class="x">
+        </span><span class="n">fmt</span><span class="o">.</span><span class="n">Printf</span><span class="p">(</span><span class="s">"r = %d, m = %d</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span><span class="x"> </span><span class="n">r</span><span class="p">,</span><span class="x"> </span><span class="n">m</span><span class="p">)</span><span class="x">
+    </span><span class="p">}</span><span class="x">
+</span><span class="p">}</span><span class="x">
+
+</span><span class="k">func</span><span class="x"> </span><span class="n">main</span><span class="p">()</span><span class="x"> </span><span class="p">{</span><span class="x">
+    </span><span class="n">newFashion</span><span class="p">()</span><span class="x">
+</span><span class="p">}</span><span class="x">
+</span></code></pre>
+</div>
+
+<h1 id="tombgo-的坑">tomb.Go(…) 的坑</h1>
+<p><code class="highlighter-rouge">tomb.Go(...)</code> 实现如下:</p>
+<div class="language-go highlighter-rouge"><pre class="highlight line-numbers "><code><span class="k">func</span><span class="x"> </span><span class="p">(</span><span class="n">t</span><span class="x"> </span><span class="o">*</span><span class="n">Tomb</span><span class="p">)</span><span class="x"> </span><span class="n">Go</span><span class="p">(</span><span class="n">f</span><span class="x"> </span><span class="k">func</span><span class="p">()</span><span class="x"> </span><span class="kt">error</span><span class="p">)</span><span class="x"> </span><span class="p">{</span><span class="x">
+	</span><span class="n">t</span><span class="o">.</span><span class="n">init</span><span class="p">()</span><span class="x">
+	</span><span class="n">t</span><span class="o">.</span><span class="n">m</span><span class="o">.</span><span class="n">Lock</span><span class="p">()</span><span class="x">
+	</span><span class="k">defer</span><span class="x"> </span><span class="n">t</span><span class="o">.</span><span class="n">m</span><span class="o">.</span><span class="n">Unlock</span><span class="p">()</span><span class="x">
+	</span><span class="k">select</span><span class="x"> </span><span class="p">{</span><span class="x">
+	</span><span class="k">case</span><span class="x"> </span><span class="o">&lt;-</span><span class="n">t</span><span class="o">.</span><span class="n">dead</span><span class="o">:</span><span class="x">
+		</span><span class="nb">panic</span><span class="p">(</span><span class="s">"tomb.Go called after all goroutines terminated"</span><span class="p">)</span><span class="x">
+	</span><span class="k">default</span><span class="o">:</span><span class="x">
+	</span><span class="p">}</span><span class="x">
+	</span><span class="n">t</span><span class="o">.</span><span class="n">alive</span><span class="o">++</span><span class="x">
+	</span><span class="k">go</span><span class="x"> </span><span class="n">t</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">f</span><span class="p">)</span><span class="x">
+</span><span class="p">}</span><span class="x">
+</span></code></pre>
+</div>
+<p>留意 <code class="highlighter-rouge">panic</code>这句, 接口文档也说了<code class="highlighter-rouge">Calling the Go method after all tracked goroutines return causes a runtime panic</code>,但在实际编码过程中,根本就很难保证在调用 <code class="highlighter-rouge">tomb.Go(...)</code>的时候之前提交的操作没有完全执行完,所以在使用这个库的时候会存在 <code class="highlighter-rouge">panic</code> 的风险. 虽然可以用 <code class="highlighter-rouge">recover</code> 捕获<code class="highlighter-rouge">panic</code>,但会增加代码量和代码复杂度.所以库里新增 <code class="highlighter-rouge">tomb.Gos(...)</code> 接口,用于同时提交多个并发执行的操作,保证不会出现 <code class="highlighter-rouge">panic</code>:</p>
+<div class="language-go highlighter-rouge"><pre class="highlight line-numbers "><code><span class="x">
+</span><span class="c">// Gos runs multiple f at a time and tracks its termination.</span><span class="x">
+</span><span class="k">func</span><span class="x"> </span><span class="p">(</span><span class="n">t</span><span class="x"> </span><span class="o">*</span><span class="n">Tomb</span><span class="p">)</span><span class="x"> </span><span class="n">Gos</span><span class="p">(</span><span class="n">fs</span><span class="x"> </span><span class="o">...</span><span class="n">Fn</span><span class="p">)</span><span class="x"> </span><span class="p">{</span><span class="x">
+	</span><span class="n">t</span><span class="o">.</span><span class="n">init</span><span class="p">()</span><span class="x">
+	</span><span class="n">t</span><span class="o">.</span><span class="n">m</span><span class="o">.</span><span class="n">Lock</span><span class="p">()</span><span class="x">
+	</span><span class="k">defer</span><span class="x"> </span><span class="n">t</span><span class="o">.</span><span class="n">m</span><span class="o">.</span><span class="n">Unlock</span><span class="p">()</span><span class="x">
+	</span><span class="k">select</span><span class="x"> </span><span class="p">{</span><span class="x">
+	</span><span class="k">case</span><span class="x"> </span><span class="o">&lt;-</span><span class="n">t</span><span class="o">.</span><span class="n">dead</span><span class="o">:</span><span class="x">
+		</span><span class="nb">panic</span><span class="p">(</span><span class="s">"tomb.Go called after all goroutines terminated"</span><span class="p">)</span><span class="x">
+	</span><span class="k">default</span><span class="o">:</span><span class="x">
+	</span><span class="p">}</span><span class="x">
+
+    </span><span class="k">for</span><span class="x"> </span><span class="n">_</span><span class="p">,</span><span class="x"> </span><span class="n">f</span><span class="x"> </span><span class="o">:=</span><span class="x"> </span><span class="k">range</span><span class="x"> </span><span class="n">fs</span><span class="x"> </span><span class="p">{</span><span class="x">
+        </span><span class="n">t</span><span class="o">.</span><span class="n">alive</span><span class="o">++</span><span class="x">
+        </span><span class="k">go</span><span class="x"> </span><span class="n">t</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">f</span><span class="p">)</span><span class="x">
+    </span><span class="p">}</span><span class="x">
+</span><span class="p">}</span><span class="x">
+</span></code></pre>
+</div>
+
+    </article>
+    
+    <div class="social-share-wrapper">
+        <div class="social-share"></div>
+    </div>
+    
+</div>
+
+<section class="author-detail">
+    <section class="post-footer-item author-card">
+        <div class="avatar">
+            <img src="/assets/img/profile.jpg" alt="">
+        </div>
+        <div class="author-name" rel="author">黄成林</div>
+        <div class="bio">
+            <p>后端开发者，热爱技术，简单爱折腾</p>
+        </div>
+        
+        <ul class="sns-links">
+            
+            <li>
+                <a href="//github.com/xsyr" target="_blank">
+                    <i class="iconfont icon-github"></i>
+                </a>
+            </li>
+            
+        </ul>
+        
+    </section>
+    <section class="post-footer-item read-next">
+        
+        
+        <div class="read-next-item">
+            <a href="/%E7%BC%96%E7%A8%8B/go/2017/09/24/limitworker-control-the-number-of-worker-in-golang.html" class="read-next-link"></a>
+            <section>
+                <span>limitworker - 动态增减worker数量</span>
+                <p>日常工作中时常需要写一些一次性并发执行的任务,但又需要根据相关资源的负载情况对并发任务数进行增减,通常最简单的方法...</p>
+            </section>
+            
+        </div>
+        
+    </section>
+    
+</section>
+
+<footer class="g-footer">
+    <section>xsyr的独立博客 © 2017</section>
+    <section>Powered by <a href="//jekyllrb.com">Jekyll</a> | <a href="https://github.com/kaeyleo/jekyll-theme-H2O">Theme H2O</a></section>
+</footer>
+
+<script src="/assets/js/social-share.min.js"></script>
+<script>
+    socialShare('.social-share', {
+        sites: ['wechat','weibo','douban','twitter'],
+        wechatQrcodeTitle: "分享到微信朋友圈",
+        wechatQrcodeHelper: '<p>扫码后点击右上角</p><p>将本文分享至朋友圈</p>'
+    });
+</script>
+<script>
+/**
+*  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+*  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
+/*
+var disqus_config = function () {
+this.page.url = PAGE_URL;  // Replace PAGE_URL with your page's canonical URL variable
+this.page.identifier = PAGE_IDENTIFIER; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+};
+*/
+(function() { // DON'T EDIT BELOW THIS LINE
+var d = document, s = d.createElement('script');
+/*写入自己的disqus信息*/
+s.src = '#';
+s.setAttribute('data-timestamp', +new Date());
+(d.head || d.body).appendChild(s);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
+<script src="/assets/js/prism.js"></script>
+<script src="/assets/js/index.min.js"></script>
+<!-- Global Site Tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-106622223-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments)};
+  gtag('js', new Date());
+
+  gtag('config', 'UA-106622223-1');
+</script>
+</body>
+</html>

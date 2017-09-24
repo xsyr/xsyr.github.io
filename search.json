@@ -1,6 +1,12 @@
 [
   
     {
+      "title"    : "tomb - 管理 goroutine",
+      "tags"     : "tomb",
+      "url"      : "/%E7%BC%96%E7%A8%8B/golang/2017/09/24/tomb-handle-golang-goroutines.html"
+    } ,
+  
+    {
       "title"    : "limitworker - 动态增减worker数量",
       "tags"     : "编程 go",
       "url"      : "/%E7%BC%96%E7%A8%8B/go/2017/09/24/limitworker-control-the-number-of-worker-in-golang.html"
