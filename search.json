@@ -1,6 +1,12 @@
 [
   
     {
+      "title"    : "limitworker - 动态增减worker数量",
+      "tags"     : "编程 go",
+      "url"      : "/%E7%BC%96%E7%A8%8B/go/2017/09/24/limitworker-control-the-number-of-worker-in-golang.html"
+    } ,
+  
+    {
       "title"    : "lua-resty-validator",
       "tags"     : "编程 lua",
       "url"      : "/%E7%BC%96%E7%A8%8B/lua/2017/09/16/lua-resty-validator.html"

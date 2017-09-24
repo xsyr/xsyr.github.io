@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>limitworker - 动态增减worker数量 - xsyr的独立博客</title>
+    <meta name="author"  content="黄成林">
+    <meta name="description" content="limitworker - 动态增减worker数量">
+    <meta name="keywords"  content="编程, go">
+    <!-- Open Graph -->
+    <meta property="og:title" content="limitworker - 动态增减worker数量 - xsyr的独立博客">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://xsyr.github.io/%E7%BC%96%E7%A8%8B/go/2017/09/24/limitworker-control-the-number-of-worker-in-golang.html">
+    <meta property="og:description" content="经验源于爱折腾, 喜欢折腾各种新鲜玩意儿。">
+    <meta property="og:site_name" content="xsyr的独立博客">
+    <link rel="shortcut icon" href="/assets/img/favicon.ico">
+    <link rel="stylesheet" href="//cdn.staticfile.org/normalize/6.0.0/normalize.min.css">
+    <link rel="stylesheet" href="//at.alicdn.com/t/font_roc50gemkxpw4s4i.css">
+    <link rel="stylesheet" href="/assets/css/github-markdown.css">
+    <link rel="stylesheet" href="/assets/css/prism.css">
+    <link rel="stylesheet" href="/assets/css/share.min.css">
+    <link rel="stylesheet" href="/assets/css/app.min.css">
+</head>
+<body>
+    <!--[if lt IE 10]>
+<div class="alert-danger" role="alert">你的浏览器实在太太太旧了，放学别走，升级完浏览器再说！<a target="_blank" class="alert-link" href="http://browsehappy.com">立即升级</a></div>
+<![endif]-->
+<input id="nm-switch" type="hidden" value="false">
+
+<header class="g-header">
+    <div class="g-logo">
+        <a href="/"></a>
+    </div>
+    <i id="menu-toggle" class="iconfont icon-menu"></i>
+    <nav class="g-nav">
+        <ul>
+            
+            <li><a href="/">home</a></li>
+            
+            <li><a href="/tags.html">tags</a></li>
+            
+        </ul>
+    </nav>
+</header>
+
+
+<header class="g-banner post-header post-pattern-circuitBoard bgcolor-default post-no-cover" data-theme="default">
+    <div class="post-wrapper">
+        <div class="post-tags">
+            
+            
+            <a href="/tags#编程" class="post-tag">编程</a>
+            
+            <a href="/tags#go" class="post-tag">go</a>
+            
+            
+        </div>
+        <h1>limitworker - 动态增减worker数量</h1>
+        <div class="post-meta">
+            <span class="post-meta-item"><i class="iconfont icon-author"></i><a href="https://xsyr.github.io" target="_blank" rel="author">黄成林</a></></span>
+            <time class="post-meta-item" datetime="17-09-24"><i class="iconfont icon-date"></i>24 Sep 2017</time>
+        </div>
+    </div>
+    
+</header>
+
+<div class="post-content">
+    
+    <article class="markdown-body">
+        <p>日常工作中时常需要写一些一次性并发执行的任务,但又需要根据相关资源的负载情况对并发任务数进行增减,
+通常最简单的方法就是停止进程,修改配置,再重启.这样做有点麻烦的是需要记录当前处理进度,避免再次重启
+的时候重复执行已完成的操作.</p>
+
+<p><a href="https://github.com/xsyr/limitworker">limitworker</a> 用于动态的控制并发的任务数量,
+可通过对 fifo 文件的操作增减并发的任务量.</p>
+
+<h1 id="demo">demo</h1>
+<div class="language-go highlighter-rouge"><pre class="highlight line-numbers "><code><span class="k">package</span><span class="x"> </span><span class="n">main</span><span class="x">
+
+</span><span class="k">import</span><span class="x"> </span><span class="p">(</span><span class="x">
+    </span><span class="s">"fmt"</span><span class="x">
+    </span><span class="s">"time"</span><span class="x">
+
+    </span><span class="s">"github.com/xsyr/limitworker"</span><span class="x">
+</span><span class="p">)</span><span class="x">
+
+</span><span class="k">func</span><span class="x"> </span><span class="n">foo</span><span class="p">(</span><span class="n">id</span><span class="x"> </span><span class="kt">int</span><span class="p">,</span><span class="x"> </span><span class="n">dying</span><span class="x"> </span><span class="o">&lt;-</span><span class="k">chan</span><span class="x"> </span><span class="k">struct</span><span class="p">{})</span><span class="x"> </span><span class="kt">error</span><span class="x"> </span><span class="p">{</span><span class="x">
+    </span><span class="n">i</span><span class="x"> </span><span class="o">:=</span><span class="x"> </span><span class="m">0</span><span class="x">
+    </span><span class="k">for</span><span class="x"> </span><span class="p">{</span><span class="x">
+        </span><span class="n">quit</span><span class="x"> </span><span class="o">:=</span><span class="x"> </span><span class="no">false</span><span class="x">
+        </span><span class="k">select</span><span class="x"> </span><span class="p">{</span><span class="x">
+            </span><span class="k">case</span><span class="x"> </span><span class="o">&lt;-</span><span class="n">dying</span><span class="o">:</span><span class="x"> </span><span class="n">quit</span><span class="x"> </span><span class="o">=</span><span class="x"> </span><span class="no">true</span><span class="x">
+        </span><span class="k">default</span><span class="o">:</span><span class="x">
+        </span><span class="p">}</span><span class="x">
+        </span><span class="k">if</span><span class="x"> </span><span class="n">quit</span><span class="x"> </span><span class="p">{</span><span class="x"> </span><span class="k">break</span><span class="x"> </span><span class="p">}</span><span class="x">
+
+        </span><span class="n">fmt</span><span class="o">.</span><span class="n">Printf</span><span class="p">(</span><span class="s">"[%d] foo</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span><span class="x"> </span><span class="n">id</span><span class="p">)</span><span class="x">
+        </span><span class="n">time</span><span class="o">.</span><span class="n">Sleep</span><span class="p">(</span><span class="m">1</span><span class="x"> </span><span class="o">*</span><span class="x"> </span><span class="n">time</span><span class="o">.</span><span class="n">Second</span><span class="p">)</span><span class="x">
+
+        </span><span class="n">i</span><span class="o">++</span><span class="x">
+        </span><span class="k">if</span><span class="x"> </span><span class="n">i</span><span class="x"> </span><span class="o">==</span><span class="x"> </span><span class="m">20</span><span class="x"> </span><span class="p">{</span><span class="x"> </span><span class="k">break</span><span class="x"> </span><span class="p">}</span><span class="x">
+    </span><span class="p">}</span><span class="x">
+
+    </span><span class="n">fmt</span><span class="o">.</span><span class="n">Printf</span><span class="p">(</span><span class="s">"[%d] foo quit</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span><span class="x"> </span><span class="n">id</span><span class="p">)</span><span class="x">
+    </span><span class="k">return</span><span class="x"> </span><span class="no">nil</span><span class="x">
+</span><span class="p">}</span><span class="x">
+
+</span><span class="k">func</span><span class="x"> </span><span class="n">main</span><span class="p">()</span><span class="x"> </span><span class="p">{</span><span class="x">
+    </span><span class="n">lw</span><span class="p">,</span><span class="x"> </span><span class="n">err</span><span class="x"> </span><span class="o">:=</span><span class="x"> </span><span class="n">limitworker</span><span class="o">.</span><span class="n">New</span><span class="p">(</span><span class="m">2</span><span class="p">,</span><span class="x"> </span><span class="s">"ctrl"</span><span class="p">,</span><span class="x"> </span><span class="s">"ctrl.log"</span><span class="p">,</span><span class="x"> </span><span class="n">foo</span><span class="p">)</span><span class="x">
+    </span><span class="k">if</span><span class="x"> </span><span class="n">err</span><span class="x"> </span><span class="o">!=</span><span class="x"> </span><span class="no">nil</span><span class="x"> </span><span class="p">{</span><span class="x">
+        </span><span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="n">err</span><span class="p">)</span><span class="x">
+        </span><span class="k">return</span><span class="x">
+    </span><span class="p">}</span><span class="x">
+
+    </span><span class="n">lw</span><span class="o">.</span><span class="n">Wait</span><span class="p">()</span><span class="x">
+    </span><span class="n">lw</span><span class="o">.</span><span class="n">Close</span><span class="p">()</span><span class="x">
+</span><span class="p">}</span><span class="x">
+</span></code></pre>
+</div>
+
+<h1 id="增加并发任务">增加并发任务</h1>
+
+<div class="language-bash highlighter-rouge"><pre class="highlight line-numbers "><code><span class="gp">$ </span><span class="nb">echo</span> <span class="s1">'+2'</span> &gt; ctrl
+</code></pre>
+</div>
+
+<p><code class="highlighter-rouge">ctrl.log</code> 记录并发任务的变化情况:</p>
+<div class="highlighter-rouge"><pre class="highlight line-numbers "><code>2017/09/24 10:53:43 limitworker.go:206: delta: +2
+2017/09/24 10:53:43 limitworker.go:106: [3]+ (running: 3, termErr: 0, termOk: 0)
+2017/09/24 10:53:43 limitworker.go:106: [4]+ (running: 4, termErr: 0, termOk: 0)
+</code></pre>
+</div>
+
+<h1 id="减少并发任务">减少并发任务</h1>
+<div class="language-bash highlighter-rouge"><pre class="highlight line-numbers "><code><span class="gp">$ </span><span class="nb">echo</span> <span class="s1">'-3'</span> &gt; ctrl
+</code></pre>
+</div>
+
+<p><code class="highlighter-rouge">ctrl.log</code> 记录并发任务的变化情况:</p>
+<div class="highlighter-rouge"><pre class="highlight line-numbers "><code>2017/09/24 10:53:46 limitworker.go:126: [3]- (running: 3, termErr: 0, termOk: 1)
+2017/09/24 10:53:46 limitworker.go:126: [1]- (running: 2, termErr: 0, termOk: 2)
+2017/09/24 10:53:46 limitworker.go:126: [2]- (running: 1, termErr: 0, termOk: 3)
+2017/09/24 10:53:46 limitworker.go:206: delta: -3
+</code></pre>
+</div>
+
+    </article>
+    
+    <div class="social-share-wrapper">
+        <div class="social-share"></div>
+    </div>
+    
+</div>
+
+<section class="author-detail">
+    <section class="post-footer-item author-card">
+        <div class="avatar">
+            <img src="/assets/img/profile.jpg" alt="">
+        </div>
+        <div class="author-name" rel="author">黄成林</div>
+        <div class="bio">
+            <p>后端开发者，热爱技术，简单爱折腾</p>
+        </div>
+        
+        <ul class="sns-links">
+            
+            <li>
+                <a href="//github.com/xsyr" target="_blank">
+                    <i class="iconfont icon-github"></i>
+                </a>
+            </li>
+            
+        </ul>
+        
+    </section>
+    <section class="post-footer-item read-next">
+        
+        
+        <div class="read-next-item">
+            <a href="/%E7%BC%96%E7%A8%8B/lua/2017/09/16/lua-resty-validator.html" class="read-next-link"></a>
+            <section>
+                <span>lua-resty-validator</span>
+                <p>之前项目中用到 openresty 作为 Web Api  的开发平台, 用 openresty 很适合开发以 h...</p>
+            </section>
+            
+        </div>
+        
+    </section>
+    
+</section>
+
+<footer class="g-footer">
+    <section>xsyr的独立博客 © 2017</section>
+    <section>Powered by <a href="//jekyllrb.com">Jekyll</a> | <a href="https://github.com/kaeyleo/jekyll-theme-H2O">Theme H2O</a></section>
+</footer>
+
+<script src="/assets/js/social-share.min.js"></script>
+<script>
+    socialShare('.social-share', {
+        sites: ['wechat','weibo','douban','twitter'],
+        wechatQrcodeTitle: "分享到微信朋友圈",
+        wechatQrcodeHelper: '<p>扫码后点击右上角</p><p>将本文分享至朋友圈</p>'
+    });
+</script>
+<script>
+/**
+*  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+*  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
+/*
+var disqus_config = function () {
+this.page.url = PAGE_URL;  // Replace PAGE_URL with your page's canonical URL variable
+this.page.identifier = PAGE_IDENTIFIER; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+};
+*/
+(function() { // DON'T EDIT BELOW THIS LINE
+var d = document, s = d.createElement('script');
+/*写入自己的disqus信息*/
+s.src = '#';
+s.setAttribute('data-timestamp', +new Date());
+(d.head || d.body).appendChild(s);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
+<script src="/assets/js/prism.js"></script>
+<script src="/assets/js/index.min.js"></script>
+<!-- Global Site Tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-106622223-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments)};
+  gtag('js', new Date());
+
+  gtag('config', 'UA-106622223-1');
+</script>
+</body>
+</html>
