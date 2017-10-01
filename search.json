@@ -1,6 +1,12 @@
 [
   
     {
+      "title"    : "nginx least_conn 解决长耗时请求的负载均衡问题",
+      "tags"     : "nginx least_conn",
+      "url"      : "/nginx/2017/10/01/nginx_least_conn_balance_for_long_time_task.html"
+    } ,
+  
+    {
       "title"    : "tomb - 管理 goroutine",
       "tags"     : "tomb",
       "url"      : "/%E7%BC%96%E7%A8%8B/golang/2017/09/24/tomb-handle-golang-goroutines.html"
