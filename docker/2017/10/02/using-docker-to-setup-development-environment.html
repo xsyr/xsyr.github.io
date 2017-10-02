@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>nginx least_conn 解决长耗时请求的负载均衡问题 - xsyr的独立博客</title>
+    <title>使用 Docker 搭建开发环境 - xsyr的独立博客</title>
     <meta name="author"  content="黄成林">
-    <meta name="description" content="nginx least_conn 解决长耗时请求的负载均衡问题">
-    <meta name="keywords"  content="nginx, least_conn">
+    <meta name="description" content="使用 Docker 搭建开发环境">
+    <meta name="keywords"  content="docker">
     <!-- Open Graph -->
-    <meta property="og:title" content="nginx least_conn 解决长耗时请求的负载均衡问题 - xsyr的独立博客">
+    <meta property="og:title" content="使用 Docker 搭建开发环境 - xsyr的独立博客">
     <meta property="og:type" content="website">
-    <meta property="og:url" content="https://xsyr.github.io/nginx/2017/10/01/nginx_least_conn_balance_for_long_time_task.html">
+    <meta property="og:url" content="https://xsyr.github.io/docker/2017/10/02/using-docker-to-setup-development-environment.html">
     <meta property="og:description" content="经验源于爱折腾, 喜欢折腾各种新鲜玩意儿。">
     <meta property="og:site_name" content="xsyr的独立博客">
     <link rel="shortcut icon" href="/assets/img/favicon.ico">
@@ -49,16 +49,14 @@
         <div class="post-tags">
             
             
-            <a href="/tags#nginx" class="post-tag">nginx</a>
-            
-            <a href="/tags#least_conn" class="post-tag">least_conn</a>
+            <a href="/tags#docker" class="post-tag">docker</a>
             
             
         </div>
-        <h1>nginx least_conn 解决长耗时请求的负载均衡问题</h1>
+        <h1>使用 Docker 搭建开发环境</h1>
         <div class="post-meta">
             <span class="post-meta-item"><i class="iconfont icon-author"></i><a href="https://xsyr.github.io" target="_blank" rel="author">黄成林</a></></span>
-            <time class="post-meta-item" datetime="17-10-01"><i class="iconfont icon-date"></i>01 Oct 2017</time>
+            <time class="post-meta-item" datetime="17-10-02"><i class="iconfont icon-date"></i>02 Oct 2017</time>
         </div>
     </div>
     
@@ -67,32 +65,59 @@
 <div class="post-content">
     
     <article class="markdown-body">
-        <p>我们有一些后端服务器专门用于音视频的处理,这些任务耗时至少在5s,之前用默认的 RR 均衡算法,
-总是导致后端服务器堆积大量请求,系统 Load 居高不下. 换了 least_conn 均衡算法之后,
-整个后端服务器的负载变得平衡了.</p>
+        <p>公司的线上机器装的是 CentOS 6.3, 系统自带的 gcc 套件版本太老旧(gcc 4.4.7),
+我们开发代码已经使用 C++ 11 标准,所以之前在虚拟机的 CentOS 6.3 上编译了 gcc 5.3.</p>
 
-<div class="highlighter-rouge"><pre class="highlight line-numbers "><code>upstream fp_calculators {
-    least_conn;
+<p>之前一直使用 virtualbox 搭建编译环境, 最近换了超级本,  内存硬盘本来就捉襟见肘.
+virtual box 环境一共使用了 16GB 硬盘, 2GB 内存, 一跑起来内存和硬盘容量就变得紧张了.</p>
 
-    server server1;
-    server server2;
-}
+<p>今天用 docker 替换 virtualbox, 磁盘使用不到 4GB, 内存也就跑应用程序的开销,
+不用再给 Guest 系统分配什么内存了. 大致操作过程如下:</p>
 
+<h1 id="1-下载-centos-63-镜像">1. 下载 centos 6.3 镜像</h1>
+<div class="language-bash highlighter-rouge"><pre class="highlight line-numbers "><code><span class="gp">$ </span>docker pull demeternacl/centos-6.3
+</code></pre>
+</div>
+<p>整个镜像也才不过140MB</p>
+
+<h1 id="2-拷贝-gcc-53-编译环境">2. 拷贝 gcc 5.3 编译环境</h1>
+<p>把 virtualbox 的 gcc 5.3 编译环境拷贝到宿主机, 因为编译环境的某些文件或目录使用了软链接,
+所以在 <code class="highlighter-rouge">cp</code> 的时候要加上 <code class="highlighter-rouge">cp -L</code>参数, 把软链接指向的文件或目录也要复制一边, 这回导致某些重复.
+也可以选择把编译环境用 <code class="highlighter-rouge">tar</code> 打包,然后直接拿到 docker 的 cetnos 环境解压.
+这里选择第一种方式.</p>
+
+<h1 id="3-docker-centos-安装基本开发环境">3. docker centos 安装基本开发环境</h1>
+<p>启动 docker centos 环境</p>
+<div class="language-bash highlighter-rouge"><pre class="highlight line-numbers "><code><span class="gp">$ </span>docker run -v /path/to/gcc-5.3:/usr/local/gcc-5.3 -v /path/to/workspace:/root/workspace -u root -w <span class="s1">'/root'</span> --name centos-gcc5.3  -it demeternacl/centos-6.3 /bin/bash
 </code></pre>
 </div>
 
-<p>对于此类场景, 基于请求量的负载均衡都不是好办法.如果要做限流, 可以使用 ngx_http_status_module
-对每个就客户端和每台后端做连接限制.</p>
-<div class="highlighter-rouge"><pre class="highlight line-numbers "><code>limit_conn_zone $binary_remote_addr zone=perip:10m;
-limit_conn_zone $server_name zone=perserver:10m;
-
-server {
-   ...
-   limit_conn perip 10;
-   limit_conn perserver 100;
-}
+<p>安装 Development tools</p>
+<div class="language-bash highlighter-rouge"><pre class="highlight line-numbers "><code><span class="gp">$ </span>yum install vim-enhanced
+<span class="gp">$ </span>yum groupinstall <span class="s1">'Development tools'</span>
 </code></pre>
 </div>
+
+<p>将 gcc 5.3 的各个目录添加到 shell 的环境变量中(写到 ~/.bashrc)</p>
+<div class="language-bash highlighter-rouge"><pre class="highlight line-numbers "><code><span class="nb">export </span><span class="nv">PATH</span><span class="o">=</span><span class="s2">"</span><span class="nv">$PATH</span><span class="s2">:/usr/local/gcc-5.3/bin"</span>
+<span class="nb">export </span><span class="nv">LD_LIBRARY_PATH</span><span class="o">=</span><span class="s2">"</span><span class="nv">$LD_LIBRARY_PATH</span><span class="s2">:/usr/local/gcc-5.3/lib"</span>
+<span class="nb">export </span><span class="nv">LD_LIBRARY_PATH</span><span class="o">=</span><span class="s2">"</span><span class="nv">$LD_LIBRARY_PATH</span><span class="s2">:/usr/local/gcc-5.3/lib64"</span>
+
+<span class="nb">alias cd</span><span class="o">=</span><span class="s1">'cd ..'</span>
+<span class="nb">alias </span><span class="nv">grep</span><span class="o">=</span><span class="s1">'grep --color=auto'</span>
+
+<span class="gp">PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ </span><span class="s1">'
+</span></code></pre>
+</div>
+
+<p>接下来可以尝试编译工程代码.</p>
+
+<h1 id="4-打包镜像分享给其他伙伴">4. 打包镜像分享给其他伙伴</h1>
+<div class="language-bash highlighter-rouge"><pre class="highlight line-numbers "><code><span class="gp">$ </span>docker commit centos-gcc5.3 my:centos-gcc5.3
+<span class="gp">$ </span>docker save -o centos-gcc5.3.tar my:centos-gcc5.3
+</code></pre>
+</div>
+<p>接下来可以将这个 tar 分发给其他伙伴使用了(当然还得把 gcc 5.3 的编译一起拷贝).</p>
 
     </article>
     
@@ -125,21 +150,12 @@ server {
     </section>
     <section class="post-footer-item read-next">
         
-        <div class="read-next-item">
-            <a href="/docker/2017/10/02/using-docker-to-setup-development-environment.html" class="read-next-link"></a>
-            <section>
-                <span>使用 Docker 搭建开发环境</span>
-                <p>公司的线上机器装的是 CentOS 6.3, 系统自带的 gcc 套件版本太老旧(gcc 4.4.7),我们开发代...</p>
-            </section>
-            
-        </div>
-        
         
         <div class="read-next-item">
-            <a href="/%E7%BC%96%E7%A8%8B/golang/2017/09/24/tomb-handle-golang-goroutines.html" class="read-next-link"></a>
+            <a href="/nginx/2017/10/01/nginx_least_conn_balance_for_long_time_task.html" class="read-next-link"></a>
             <section>
-                <span>tomb - 管理 goroutine</span>
-                <p>日常开发中,最常见的就是处理并发问题,比如要完成一个业务操作,需要读取多个数据源(Map),得到所有数据之后再进行...</p>
+                <span>nginx least_conn 解决长耗时请求的负载均衡问题</span>
+                <p>我们有一些后端服务器专门用于音视频的处理,这些任务耗时至少在5s,之前用默认的 RR 均衡算法,总是导致后端服务器...</p>
             </section>
             
         </div>
