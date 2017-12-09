@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>sfs(small filesystem)-小存储系统 - xsyr的独立博客</title>
+    <title>sfs(small file storage)-小文件存储系统 - xsyr的独立博客</title>
     <meta name="author"  content="黄成林">
-    <meta name="description" content="sfs(small filesystem)-小存储系统">
+    <meta name="description" content="sfs(small file storage)-小文件存储系统">
     <meta name="keywords"  content="架构">
     <!-- Open Graph -->
-    <meta property="og:title" content="sfs(small filesystem)-小存储系统 - xsyr的独立博客">
+    <meta property="og:title" content="sfs(small file storage)-小文件存储系统 - xsyr的独立博客">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://xsyr.github.io/%E6%9E%B6%E6%9E%84/2017/12/09/sfs-small-file-system.html">
     <meta property="og:description" content="经验源于爱折腾, 喜欢折腾各种新鲜玩意儿。">
@@ -53,7 +53,7 @@
             
             
         </div>
-        <h1>sfs(small filesystem)-小存储系统</h1>
+        <h1>sfs(small file storage)-小文件存储系统</h1>
         <div class="post-meta">
             <span class="post-meta-item"><i class="iconfont icon-author"></i><a href="https://xsyr.github.io" target="_blank" rel="author">黄成林</a></></span>
             <time class="post-meta-item" datetime="17-12-09"><i class="iconfont icon-date"></i>09 Dec 2017</time>
@@ -66,7 +66,7 @@
     
     <article class="markdown-body">
         <h1 id="一简介">一、简介</h1>
-<p>sfs 是 small file system 的简写, 意在提供小文件的存储,目前文件大小上限为 10MB.
+<p>sfs 是 small file storage 的简写, 意在提供小文件的存储,目前文件大小上限为 10MB.
 底层存储 seaweedfs 作为存储引擎. seaweedfs 以 volume 为存储单元, 将多个文件连续存入
 volume 直到 volume 满, 之后 volume 切换为 readonly 状态.
 这样做的好处是避免讲小文件以单个文件的形式存储至文件系统, 减少文件系统元数据的维护成本(内存消耗大, 缓存命中率低等).
