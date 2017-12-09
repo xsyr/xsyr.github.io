@@ -101,7 +101,7 @@ seaweedfs 并不会自动为 A 找新的替代节点, 只能手动从 B 复制�
   <li>目前多 Master 部署时还有脑裂的情况, 会导致数据相互覆盖.https://github.com/chrislusf/seaweedfs/issues/418</li>
 </ol>
 
-<p>#　二、架构</p>
+<h1 id="二架构">二、架构</h1>
 
 <p><img src="/assets/img/small-filesystem.png" alt="small-filesystem" /></p>
 
@@ -127,40 +127,205 @@ API 上通过 collection 进行隔离.</p>
 <pre><code class="language-dash">curl 'http://xxxx/storage/v1/sfs?name=test.json&amp;collection=xxx'
 </code></pre>
 <h3 id="请求参数">请求参数</h3>
-<p>| 参数名     | 是否必填 | 说明                                     |
-| ———- | ——– | —————————————- |
-| name       | 是       | 文件名                                   |
-| collection | 是       | 代表不同的业务，如 audio， video， image |</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>参数名</th>
+      <th>是否必填</th>
+      <th>说明</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>name</td>
+      <td>是</td>
+      <td>文件名</td>
+    </tr>
+    <tr>
+      <td>collection</td>
+      <td>是</td>
+      <td>代表不同的业务，如 audio， video， image</td>
+    </tr>
+  </tbody>
+</table>
 
 <h3 id="响应参数">响应参数</h3>
-<p>响应参数都在 http 头部
-| 参数         | 说明                                                 |
-| ———— | —————————————————- |
-| Sfs-Hash     | 文件的hash，在上传时sfs网关会自动计算文件md5作为hash |
-| Sfs-Size     | 文件字节大小                                         |
-| Sfs-Metadata | 文件相关的元数据，在文件上传时指定                   |
-| Sfs-Fid      | 文件在 seaweedfs 中的 fid                            |
-| Sfs-Status   | 文件状态， 0 - 未上传，1 - 已成功上传                |
-| Sfs-Addtime  | 文件成功上传的时间                                                     |</p>
+
+<p>响应参数都在 http 头部</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>参数</th>
+      <th>说明</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Sfs-Hash</td>
+      <td>文件的hash，在上传时sfs网关会自动计算文件md5作为hash</td>
+    </tr>
+    <tr>
+      <td>Sfs-Size</td>
+      <td>文件字节大小</td>
+    </tr>
+    <tr>
+      <td>Sfs-Metadata</td>
+      <td>文件相关的元数据，在文件上传时指定</td>
+    </tr>
+    <tr>
+      <td>Sfs-Fid</td>
+      <td>文件在 seaweedfs 中的 fid</td>
+    </tr>
+    <tr>
+      <td>Sfs-Status</td>
+      <td>文件状态， 0 - 未上传，1 - 已成功上传</td>
+    </tr>
+    <tr>
+      <td>Sfs-Addtime</td>
+      <td>文件成功上传的时间</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="错误码">错误码</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th>错误码</th>
+      <th>说明</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>200</td>
+      <td>文件存在, 请求成功</td>
+    </tr>
+    <tr>
+      <td>400</td>
+      <td>参数错误</td>
+    </tr>
+    <tr>
+      <td>404</td>
+      <td>文件不存在</td>
+    </tr>
+    <tr>
+      <td>500</td>
+      <td>服务异常</td>
+    </tr>
+  </tbody>
+</table>
 
 <h2 id="2-读取文件接口get">2. 读取文件接口(GET)</h2>
 <p>请求参数和响应参数与 HEAD 相同， 只是 http body 会返回文件的内容。</p>
 
 <h2 id="3-上传更新文件接口postput">3. 上传/更新文件接口(POST/PUT)</h2>
 <h3 id="请求参数-1">请求参数</h3>
-<p>文件上传时 http 头部必须带上 Content-Length 标识文件的大小， 目前最大支持 10MB。
-| 参数       | 是否必填 | 说明                                                        |
-| ———- | ——– | ———————————————————– |
-| name       | 是       | 文件名                                                       |
-| collection | 是       | 代表不同业务                                                  |
-| hash       | 否       | 文件hash，sfs网关在接收文件之后会做校验，如果和文件的hash对不上则报错，也可以通过头部 Sfs-Hash 传输 |
-| metadata   | 否       | 文件相关的元数据，建议不要超过1k，也可以通过头部 Sfs-Metadata 传输   |</p>
+<p>文件上传时 http 头部必须带上 Content-Length 标识文件的大小， 目前最大支持 10MB。</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>参数</th>
+      <th>是否必填</th>
+      <th>说明</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>name</td>
+      <td>是</td>
+      <td>文件名</td>
+    </tr>
+    <tr>
+      <td>collection</td>
+      <td>是</td>
+      <td>代表不同业务</td>
+    </tr>
+    <tr>
+      <td>hash</td>
+      <td>否</td>
+      <td>文件hash，sfs网关在接收文件之后会做校验，如果和文件的hash对不上则报错，也可以通过头部 Sfs-Hash 传输</td>
+    </tr>
+    <tr>
+      <td>metadata</td>
+      <td>否</td>
+      <td>文件相关的元数据，建议不要超过1k，也可以通过头部 Sfs-Metadata 传输</td>
+    </tr>
+  </tbody>
+</table>
 
 <h3 id="响应参数-1">响应参数</h3>
 <p>与 HEAD, GET 一致.</p>
 
+<h3 id="错误码-1">错误码</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th>错误码</th>
+      <th>说明</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>200</td>
+      <td>文件存在, 请求成功</td>
+    </tr>
+    <tr>
+      <td>400</td>
+      <td>参数错误</td>
+    </tr>
+    <tr>
+      <td>404</td>
+      <td>文件不存在</td>
+    </tr>
+    <tr>
+      <td>411</td>
+      <td>缺少 Content-Length 头</td>
+    </tr>
+    <tr>
+      <td>413</td>
+      <td>文件太大,超过上限</td>
+    </tr>
+    <tr>
+      <td>500</td>
+      <td>服务异常</td>
+    </tr>
+  </tbody>
+</table>
+
 <h2 id="4-删除接口">4. 删除接口</h2>
 <h3 id="请求参数-2">请求参数</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th>错误码</th>
+      <th>说明</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>200</td>
+      <td>文件存在, 请求成功</td>
+    </tr>
+    <tr>
+      <td>400</td>
+      <td>参数错误</td>
+    </tr>
+    <tr>
+      <td>404</td>
+      <td>文件不存在</td>
+    </tr>
+    <tr>
+      <td>500</td>
+      <td>服务异常</td>
+    </tr>
+  </tbody>
+</table>
 
 <h3 id="响应参数-2">响应参数</h3>
 
