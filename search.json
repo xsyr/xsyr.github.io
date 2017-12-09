@@ -1,6 +1,12 @@
 [
   
     {
+      "title"    : "sfs(small filesystem)-小存储系统",
+      "tags"     : "架构",
+      "url"      : "/%E6%9E%B6%E6%9E%84/2017/12/09/sfs-small-file-system.html"
+    } ,
+  
+    {
       "title"    : "使用 Docker 搭建开发环境",
       "tags"     : "docker",
       "url"      : "/docker/2017/10/02/using-docker-to-setup-development-environment.html"
