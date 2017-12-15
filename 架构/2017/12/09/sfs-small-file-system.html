@@ -66,6 +66,10 @@
     
     <article class="markdown-body">
         <h1 id="一简介">一、简介</h1>
+
+<p>最近公司的服务要升级，需要一个新的小文件存储系统，用来存储服务产生的3000万文件，文件大小在 20-80KB之间。
+于是就有了 sfs。</p>
+
 <p>sfs 是 small file storage 的简写, 意在提供小文件的存储,目前文件大小上限为 10MB.
 底层存储 seaweedfs 作为存储引擎. seaweedfs 以 volume 为存储单元, 将多个文件连续存入
 volume 直到 volume 满, 之后 volume 切换为 readonly 状态.
@@ -117,8 +121,8 @@ API 上通过 collection 进行隔离.</p>
 <p>上面提到写入失败留下脏数据的问题, 解决方法是每次 assign 得到 fid 之后, 在 mysql 中保存 fid 和 &lt;filename, collection&gt; 的关系, 同时在 MySQL 中用 <code class="highlighter-rouge">status</code> 标记文件的状态, 0表示未上传, 1表示已上传成功.
 这样避免重试上传的时候都产生新的 fid 而留下脏数据.</p>
 
-<h1 id="三安全和认证">三、安全和认证</h1>
-<p>目前只在项目内部使用， 安全和认证这方面暂不支持。</p>
+<h1 id="三授权和认证">三、授权和认证</h1>
+<p>每个 collection 需要注册 appid 和 对应的 secretkey，请求是带上 sign 进行认证。</p>
 
 <h1 id="四api-说明">四、API 说明</h1>
 <p>sfs 文件操作都通过 restful 暴露给客户端, http://xxx/storage/v1/sfs</p>
@@ -147,6 +151,21 @@ API 上通过 collection 进行隔离.</p>
       <td>是</td>
       <td>代表不同的业务，如 audio， video， image</td>
     </tr>
+    <tr>
+      <td>appid</td>
+      <td>是</td>
+      <td>应用ID,统一分配</td>
+    </tr>
+    <tr>
+      <td>ts</td>
+      <td>是</td>
+      <td>请求时的unix时间戳(秒), 请求有效时间为15分钟</td>
+    </tr>
+    <tr>
+      <td>sign</td>
+      <td>是</td>
+      <td>sign=md5(name + collection + appid + ts + secretkey)</td>
+    </tr>
   </tbody>
 </table>
 
@@ -163,28 +182,32 @@ API 上通过 collection 进行隔离.</p>
   </thead>
   <tbody>
     <tr>
-      <td>Sfs-Hash</td>
+      <td>X-Sfs-Hash</td>
       <td>文件的hash，在上传时sfs网关会自动计算文件md5作为hash</td>
     </tr>
     <tr>
-      <td>Sfs-Size</td>
+      <td>X-Sfs-Size</td>
       <td>文件字节大小</td>
     </tr>
     <tr>
-      <td>Sfs-Metadata</td>
+      <td>X-Sfs-Metadata</td>
       <td>文件相关的元数据，在文件上传时指定</td>
     </tr>
     <tr>
-      <td>Sfs-Fid</td>
+      <td>X-Sfs-Fid</td>
       <td>文件在 seaweedfs 中的 fid</td>
     </tr>
     <tr>
-      <td>Sfs-Status</td>
+      <td>X-Sfs-Status</td>
       <td>文件状态， 0 - 未上传，1 - 已成功上传</td>
     </tr>
     <tr>
-      <td>Sfs-Addtime</td>
+      <td>X-Sfs-Addtime</td>
       <td>文件成功上传的时间</td>
+    </tr>
+    <tr>
+      <td>X-Sfs-Url</td>
+      <td>文件下载地址</td>
     </tr>
   </tbody>
 </table>
@@ -206,6 +229,10 @@ API 上通过 collection 进行隔离.</p>
     <tr>
       <td>400</td>
       <td>参数错误</td>
+    </tr>
+    <tr>
+      <td>401</td>
+      <td>未认证</td>
     </tr>
     <tr>
       <td>404</td>
@@ -245,9 +272,24 @@ API 上通过 collection 进行隔离.</p>
       <td>代表不同业务</td>
     </tr>
     <tr>
+      <td>appid</td>
+      <td>是</td>
+      <td>应用ID,统一分配</td>
+    </tr>
+    <tr>
+      <td>ts</td>
+      <td>是</td>
+      <td>请求时的unix时间戳(秒), 请求有效时间为15分钟</td>
+    </tr>
+    <tr>
+      <td>sign</td>
+      <td>是</td>
+      <td>sign=md5(name + collection + appid + ts + secretkey)</td>
+    </tr>
+    <tr>
       <td>hash</td>
       <td>否</td>
-      <td>文件hash，sfs网关在接收文件之后会做校验，如果和文件的hash对不上则报错，也可以通过头部 Sfs-Hash 传输</td>
+      <td>文件hash，sfs网关在接收文件之后会做校验，如果和文件的hash对不上则报错，也可以通过头部 X-Sfs-Hash 传输</td>
     </tr>
     <tr>
       <td>metadata</td>
@@ -277,6 +319,10 @@ API 上通过 collection 进行隔离.</p>
     <tr>
       <td>400</td>
       <td>参数错误</td>
+    </tr>
+    <tr>
+      <td>401</td>
+      <td>未认证</td>
     </tr>
     <tr>
       <td>404</td>
@@ -320,6 +366,21 @@ API 上通过 collection 进行隔离.</p>
       <td>是</td>
       <td>代表不同的业务，如 audio， video， image</td>
     </tr>
+    <tr>
+      <td>appid</td>
+      <td>是</td>
+      <td>应用ID,统一分配</td>
+    </tr>
+    <tr>
+      <td>ts</td>
+      <td>是</td>
+      <td>请求时的unix时间戳(秒), 请求有效时间为15分钟</td>
+    </tr>
+    <tr>
+      <td>sign</td>
+      <td>是</td>
+      <td>sign=md5(name + collection + appid + ts + secretkey)</td>
+    </tr>
   </tbody>
 </table>
 
@@ -344,6 +405,10 @@ API 上通过 collection 进行隔离.</p>
       <td>参数错误</td>
     </tr>
     <tr>
+      <td>401</td>
+      <td>未认证</td>
+    </tr>
+    <tr>
       <td>404</td>
       <td>文件不存在</td>
     </tr>
@@ -353,6 +418,9 @@ API 上通过 collection 进行隔离.</p>
     </tr>
   </tbody>
 </table>
+
+<h1 id="性能">性能</h1>
+<p>为了避免 gateway 成为瓶颈， 可以使用 HEAD 从响应头部读取 X-Sfs-Url, 之后再通过 http GET 下载文件.</p>
 
     </article>
     
